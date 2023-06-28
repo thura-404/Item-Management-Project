@@ -155,15 +155,16 @@ class ItemController extends Controller
     public function itemInactive($id)
     {
         try {
+            Log::info($id);
             $isInactive = new InactiveItem($id);
             $isInactive->executeProcess();
 
             if (!$isInactive) {
-                return response()->route('items.list')->withErrors(['message' => $isInactive]);
+                return response()->back()->withErrors(['message' => $isInactive]);
             }
-            return redirect()->route('items.list')->with(['success' => 'Items Inactivated!']);
+            return redirect()->back()->with(['success' => 'Items Inactivated!']);
         } catch (\Exception $e) {
-            return redirect()->route('items.list')->withErrors(['message' => $e->getMessage()]);
+            return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }
     }
 

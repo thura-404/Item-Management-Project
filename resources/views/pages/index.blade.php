@@ -121,16 +121,17 @@ New Item
                             <td>{{ $item['safety_stock'] }}</td>
                             <td>
                                 @if ($item['deleted_at'] == null)
-                                <a href="{{ route('items.inactive', ['id' => $item['id']]) }}" class="btn btn-success btn-icon-split" title="Inactive">
+                                <!-- Button trigger modal -->
+                                <button type="button" class="btn btn-success btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-target="#itemInactiveModel" title="Inactive">
                                     <span class="icon text-white-50">
                                         <i class="fas fa-check"></i>
                                     </span>
                                     <span class="text">
                                         Active
                                     </span>
-                                </a>
+                                </button>
                                 @else
-                                <a href="" class="btn btn-secondary btn-icon-split" title="Active">
+                                <a href="" class="btn btn-secondary btn-icon-split"  data-toggle="tooltip" data-placement="top" title="Active">
                                     <span class="icon text-white-50">
                                         <i class="fas fa-ban"></i>
                                     </span>
@@ -143,17 +144,17 @@ New Item
 
                             </td>
                             <td>
-                                <a href="" class="btn btn-info btn-icon-split" title="Details">
+                                <a href="" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Details">
                                     <span class="text">
                                         <i class="fas fa-info-circle"></i>
                                     </span>
                                 </a>
-                                <a href="" class="btn btn-warning btn-icon-split" title="Update">
+                                <a href="" class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Update">
                                     <span class="text">
                                         <i class="fas fa-wrench"></i>
                                     </span>
                                 </a>
-                                <a href="" class="btn btn-danger btn-icon-split" title="Delete">
+                                <a href="" class="btn btn-danger btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Delete">
                                     <span class="text">
                                         <i class="fas fa-trash"></i>
                                     </span>
@@ -180,11 +181,59 @@ New Item
 </div>
 <!-- End of Main Content -->
 
+<!-- Modal -->
+<div class="modal fade" id="itemInactiveModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Inactive Item?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Item ID: <span id="modalItemId"></span></p>
+                <p>Item Code: <span id="modalItemCode"></span></p>
+                <p>Item Name: <span id="modalItemName"></span></p>
+                <p>Category Name: <span id="modalCategoryName"></span></p>
+                <p>Safety Stock: <span id="modalSafetyStock"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="modalSaveChanges" data-dismiss="modal" onclick="location.href='{{ route('items.inactive', ['id' => ':itemId']) }}'.replace(':itemId', $('#modalItemId').text())">Inactive</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <!-- Scroll to Top Button-->
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+
+        $('#itemInactiveModel').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var itemId = button.data('id'); // Extract item ID from data-id attribute
+            var itemCode = button.closest('tr').find('td:eq(0)').text(); // Get item code from table row
+            var itemName = button.closest('tr').find('td:eq(1)').text(); // Get item name from table row
+            var categoryName = button.closest('tr').find('td:eq(2)').text(); // Get category name from table row
+            var safetyStock = button.closest('tr').find('td:eq(3)').text(); // Get safety stock from table row
+
+            // Set the values in the modal
+            $('#modalItemId').text(itemId);
+            $('#modalItemCode').text(itemCode);
+            $('#modalItemName').text(itemName);
+            $('#modalCategoryName').text(categoryName);
+            $('#modalSafetyStock').text(safetyStock);
+        });
+    });
+</script>
 
 @endsection
