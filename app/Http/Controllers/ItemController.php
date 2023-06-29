@@ -212,9 +212,27 @@ class ItemController extends Controller
      * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function show(Item $item)
+    public function show(Item $item, $id, $destinationPage, $sourcePage)
     {
         //
+        try {            
+            $showItem = $this->itemInterface->getItemById($id);
+    
+            if (!$showItem) {
+                return redirect()->route('items.register-form')->withErrors(['message' => $showItem]);
+            }
+    
+            if ($destinationPage === 'detail') {
+                return view('detail-page', ['item' => $showItem]);
+            } elseif ($destinationPage === 'update') {
+                return view('update-page', ['item' => $showItem]);
+            } else {
+                // Invalid page type, handle the error or redirect to an appropriate route
+                return redirect()->route('items.register-form')->withErrors(['message' => 'Invalid page type']);
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('items.register-form')->withErrors(['message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -223,7 +241,7 @@ class ItemController extends Controller
      * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function edit(Item $item)
+    public function edit(Item $item, $id)
     {
         //
     }

@@ -33,6 +33,8 @@ Route::group(['prefix' => 'items'], function(){
     Route::post('/excel-register', 'ItemController@excelImport')->name('items.excel-register');
     Route::post('/search', 'ItemController@search')->name('items.search');
     Route::get('/{id}/inactive', 'ItemController@itemInactive')->name('items.inactive');
+    Route::get('/{id}/detail', 'ItemController@show')->name('items.detail');
+    Route::get('/{id}/update', )
 });
 
 Route::group(['prefix' => 'categories'], function(){

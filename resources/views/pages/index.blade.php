@@ -131,7 +131,7 @@ New Item
                                     </span>
                                 </button>
                                 @else
-                                <a href="" class="btn btn-secondary btn-icon-split"  data-toggle="tooltip" data-placement="top" title="Active">
+                                <a href="" class="btn btn-secondary btn-icon-split" data-toggle="tooltip" data-placement="top" title="Active">
                                     <span class="icon text-white-50">
                                         <i class="fas fa-ban"></i>
                                     </span>
@@ -144,11 +144,12 @@ New Item
 
                             </td>
                             <td>
-                                <a href="" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Details">
+                                <a href="{{ $item['id'] }}" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Details">
                                     <span class="text">
                                         <i class="fas fa-info-circle"></i>
                                     </span>
                                 </a>
+                                @if ($item['deleted_at'] == null)
                                 <a href="" class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Update">
                                     <span class="text">
                                         <i class="fas fa-wrench"></i>
@@ -159,6 +160,19 @@ New Item
                                         <i class="fas fa-trash"></i>
                                     </span>
                                 </a>
+                                @else
+                                <button class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Feature Disabled for Inactive itmes!">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-wrench"></i>
+                                    </span>
+                                </button>
+                                <button class="btn btn-danger btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Feature Disabled for Inactive itmes!">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                </button>
+                                @endif
+
                             </td>
                         </tr>
                         @endforeach
