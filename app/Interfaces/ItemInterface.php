@@ -12,4 +12,6 @@ interface ItemInterface
     public function getMaxItemId();
 
     public function searchItems($data);
+
+    public function downloadItems();
 }

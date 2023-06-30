@@ -5,16 +5,16 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class CategoryAddRequest
+ * Class ItemDeleteRequest
  * @author Thura Win
- * @create 23/06/2023
+ * @create 30/6/2023
  */
-class ItemSearchRequest extends FormRequest
+class ItemDeleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      * @author Thura Win
-     * @create 23/06/2023
+     * @create 30/6/2023
      * @return bool
      */
     public function authorize()
@@ -25,30 +25,29 @@ class ItemSearchRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      * @author Thura Win
-     * @create 23/06/2023
+     * @create 30/6/2023
      * @return array
      */
     public function rules()
     {
         return [
             //
-            'txtItemId' => 'numeric|min:5',
-            'cboCategories' => 'exists:categories,id',
+            'txtId' => 'required|numeric|exists:items,id',
         ];
     }
 
     /**
      * Get the error messages for the defined validation rules.
      * @author Thura Win
-     * @create 23/06/2023
+     * @create 30/6/2023
      * @return array
      */
     public function messages()
     {
         return [
-            'txtItemId.numeric' => 'Item Id must be numeric',
-            'txtItemId.min' => 'Item Id must be at least 5 digits',
-            'cboCategories.exists' => 'Category does not exist',
+            'txtId.required' => 'Id is missing',
+            'txtId.numeric' => 'Id must be numeric',
+            'txtId.exists' => 'Item not found',
         ];
     }
 }

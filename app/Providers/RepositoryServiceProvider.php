@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Interfaces\CategoryInterface;
 use App\Interfaces\EmployeeInterface;
 use App\Interfaces\ItemInterface;
+use App\Interfaces\ItemUploadInterface;
 use App\Repositories\CategoryRepository;
 use App\Repositories\EmployeeRepository;
 use App\Repositories\ItemRepository;
+use App\Repositories\ItemUploadRepository;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -17,6 +19,7 @@ class RepositoryServiceProvider extends ServiceProvider
         EmployeeInterface::class => EmployeeRepository::class,
         ItemInterface::class => ItemRepository::class,
         CategoryInterface::class => CategoryRepository::class,
+        ItemUploadInterface::class => ItemUploadRepository::class,
     ];
     
     public function register()
@@ -27,5 +30,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmployeeInterface::class, EmployeeRepository::class);
         $this->app->bind(ItemInterface::class, ItemRepository::class);
         $this->app->bind(CategoryInterface::class, CategoryRepository::class);
+        $this->app->bind(ItemUploadInterface::class, ItemUploadRepository::class);
     }
 }

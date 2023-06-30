@@ -2,10 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Models\Employee;
-use Illuminate\Support\Facades\Hash;
-use App\Interfaces\ItemInterface;
 use App\Models\Item;
+use App\Models\Employee;
+use App\Interfaces\ItemInterface;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 
 
 /**
@@ -66,8 +67,6 @@ class ItemRepository implements ItemInterface
     /**
      * Search Items.
      *
-     * If no records exist, return flase.
-     * If records exist, return the results.
      * @author Thura Win
      * @create 26/06/2023
      * @return array
@@ -75,13 +74,40 @@ class ItemRepository implements ItemInterface
     public function searchItems($data)
     {
         $searchItems = Item::join('categories', 'items.category_id', '=', 'categories.id')
-                        ->where([['items.item_id', 'like', '%' . $data->txtItemID . '%'],
-                                ['items.item_code', 'like', '%' . $data->txtCode . '%'],
-                                ['items.item_name', 'like', '%' . $data->txtItemName . '%'],
-                                ['categories.name', 'like', '%' . $data->cboCategories . '%']])
-                        ->first()
-                        ->toArray();
-        
+                            ->select('items.*', 'categories.name as name');
+
+        if (!empty($data['txtItemId'])) {
+            $searchItems->where('items.item_id', "LIKE", $data['txtItemId']);
+        }
+
+        if (!empty($data['txtCode'])) {
+            $searchItems->where('items.item_code', "LIKE", $data['txtCode']);
+        }
+
+        if (!empty($data['txtItemName'])) {
+            $searchItems->where('items.item_name', "LIKE", $data['txtItemName']);
+        }
+
+        if(!empty($data['cboCategories'])){
+            $searchItems->where('categories.id', "=", $data['cboCategories']);
+        }
+
+        $searchResults = $searchItems->paginate(20);
+
+        return $searchResults;
+    }
+
+    /**
+     * Download Items.
+     * @author Thura Win
+     * @create 30/06/2023
+     * @return array
+     */
+    public function downloadItems()
+    {
+        $searchItems = Item::join('categories', 'items.category_id', '=', 'categories.id')
+                        ->select('items.item_id', 'items.item_code', 'items.item_name', 'categories.name', 'items.safety_stock', 'items.received_date', 'items.description')
+                        ->get();        
         return $searchItems;
     }
 }

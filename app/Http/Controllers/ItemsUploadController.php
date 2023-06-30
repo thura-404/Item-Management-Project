@@ -75,11 +75,14 @@ class ItemsUploadController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\ItemsUpload  $itemsUpload
+     * @author Thura Win
+     * @create 30/06/2023
+     * @param  \App\Models\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ItemsUpload $itemsUpload)
+    public function destroy()
     {
         //
+        
     }
 }

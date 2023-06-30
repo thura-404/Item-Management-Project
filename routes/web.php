@@ -29,12 +29,16 @@ Route::group(['prefix' => 'items'], function(){
     Route::get('/register-form', 'ItemController@create')->name('items.register-form');
     Route::get('/excel-form', 'ItemController@createExcel')->name('items.excel-form');
     Route::get('/excel-format', 'ItemController@ExcelFormatDownload')->name('items.excel-format');
+    Route::get('/{type}/export-all', 'ItemController@exportAllItems')->name('items.export-all');
     Route::post('/register', 'ItemController@store')->name('items.register');
     Route::post('/excel-register', 'ItemController@excelImport')->name('items.excel-register');
     Route::post('/search', 'ItemController@search')->name('items.search');
+    Route::post('/search-export', 'ItemController@exportSearchItems')->name('items.search-export');
+    Route::get('/{id}/active', 'ItemController@itemActive')->name('items.active');
     Route::get('/{id}/inactive', 'ItemController@itemInactive')->name('items.inactive');
     Route::get('/{id}/detail', 'ItemController@show')->name('items.detail');
-    Route::get('/{id}/update', )
+    Route::get('/{id}/update', 'ItemsUploadController@edit')->name('items.update');
+    Route::delete('/delete', 'ItemController@destroy')->name('items.delete');
 });
 
 Route::group(['prefix' => 'categories'], function(){

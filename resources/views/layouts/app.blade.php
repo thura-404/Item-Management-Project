@@ -46,7 +46,8 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ route('items.list' ) }}">
                     <i class="fas fa-layer-group"></i>
-                    <span>Items List</span></a>
+                    <span>Items List</span>
+                </a>
             </li>
 
 
@@ -82,6 +83,12 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
+                        <!-- Nav Item - Alerts -->
+                        <li class="nav-item dropdown no-arrow mx-1">
+
+                            @yield('download')
+                        </li>
+
                         <div class="topbar-divider d-none d-sm-block"></div>
 
                         <!-- Nav Item - User Information -->
@@ -94,12 +101,11 @@
                                 <span class="text">@yield('nav-item-text')</span>
                             </a>
                         </li>
-
                     </ul>
 
                 </nav>
                 <!-- End of Topbar -->
-                
+
                 @yield('body-container')
 
                 <!-- Footer -->
@@ -118,7 +124,7 @@
         </div>
         <!-- End of Page Wrapper -->
 
-       
+
 
         <!-- Bootstrap core JavaScript-->
         <script src="/jquery/jquery.min.js"></script>

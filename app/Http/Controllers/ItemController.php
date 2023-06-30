@@ -3,28 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Item;
+use App\Exports\ItemsExport;
 use Illuminate\Http\Request;
 use App\Interfaces\ItemInterface;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Interfaces\CategoryInterface;
 use App\DBTransactions\Items\SaveItem;
+use App\Interfaces\ItemUploadInterface;
+use App\DBTransactions\Items\ActiveItem;
+use App\DBTransactions\Items\DeleteItem;
 use App\Exports\ItemRegiserFormatExport;
+use App\Http\Requests\ItemDeleteRequest;
 use App\Http\Requests\ItemSearchRequest;
 use App\Imports\ItemRegisterExcelImport;
+use App\DBTransactions\Items\PDFDownload;
 use App\Http\Requests\ExcelImportRequest;
 use App\DBTransactions\Items\InactiveItem;
 use App\Http\Requests\ItemRegisterRequest;
 use App\DBTransactions\ItemsUploads\SaveItemUpload;
+use App\DBTransactions\ItemsUploads\DeleteItemUpload;
 
 class ItemController extends Controller
 {
-    private $itemInterface, $categoryInterface;
+    private $itemInterface, $categoryInterface, $itemsUploadInterface;
 
-    public function __construct(Item $item, ItemInterface $itemInterface, CategoryInterface $categoryInterface)
+    public function __construct(Item $item, ItemInterface $itemInterface, CategoryInterface $categoryInterface, ItemUploadInterface $itemsUploadInterface)
     {
         $this->itemInterface = $itemInterface;
         $this->categoryInterface = $categoryInterface;
+        $this->itemsUploadInterface = $itemsUploadInterface;    
     }
 
 
@@ -51,14 +59,19 @@ class ItemController extends Controller
      * @create 26/06/2023
      * @return \Illuminate\Http\Response
      */
-    public function search(ItemSearchRequest $request)
+    public function search(Request $request)
     {
         //
         try {
-            $items = $this->itemInterface->searchItems($request); // search items
-            return view('pages.index')->with('items', $items);
-        } catch (\Exception $th) {
-            //throw $th;
+            $searchResult = $this->itemInterface->searchItems($request); // search items
+            $categories = $this->categoryInterface->getUsedCategories();
+            if (!$searchResult) {
+                return view('pages.index')->with(['items' => $searchResult])->with('categories', $categories);
+            }
+            $_SESSION['searchDownlaod'] = $searchResult;
+            return view('pages.index')->with('items', $searchResult)->with('categories', $categories)->with('search', true);
+        } catch (\Exception $e) {
+            return view('pages.index')->withErrors(['message' => $e->getMessage()])->with('categories', $categories);
         }
     }
 
@@ -108,6 +121,53 @@ class ItemController extends Controller
     }
 
     /**
+     * Export a listing of the resource.
+     *
+     * @author Thura Win
+     * @create 30/06/2023
+     * @param  \Illuminate\Http\Request  $request
+     * @return Excel File.
+     */
+    public function exportAllItems($type)
+    {
+        try {
+            if ($type == 'excel') {
+                $itemsToDownload = $this->itemInterface->downloadItems();
+                return Excel::download(new ItemsExport($itemsToDownload), 'items.xlsx');
+            } else if ($type == 'pdf') {
+                $itemsToDownload = $this->itemInterface->downloadItems();
+                $result = new PDFDownload($itemsToDownload);
+                return $result->downloadItemsAsPDF();
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('items.list')->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Export a listing of the resource.
+     *
+     * @author Thura Win
+     * @create 30/06/2023
+     * @param  \Illuminate\Http\Request  $request
+     * @return Excel File.
+     */
+    public function exportSearchItems(Request $request)
+    {
+        try {
+            if ($request->type  == 'excel') {
+                Log::info(unserialize(base64_decode($request->items)));
+                return Excel::download(new ItemsExport(unserialize(base64_decode($request->input('items')))), 'items.xlsx');
+            } else if ($request->type == 'pdf') {
+                $result = new PDFDownload($request->items);
+                return $result->downloadItemsAsPDF();
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('items.list')->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Import a listing of the resource.
      *
      * @author Thura Win
@@ -131,16 +191,23 @@ class ItemController extends Controller
      * Activate Items
      *
      * @author Thura Win
-     * @create 23/06/2023
+     * @create 28/06/2023
      * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function itemActive($id)
     {
         try {
-            return redirect()->route('items.excel-form')->with(['success' => 'Items saved successfully']);
+            Log::info($id);
+            $isInactive = new ActiveItem($id);
+            $isInactive->executeProcess();
+
+            if (!$isInactive) {
+                return response()->back()->withErrors(['message' => $isInactive]);
+            }
+            return redirect()->back()->with(['success' => 'Items Activated!']);
         } catch (\Exception $e) {
-            return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);
+            return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }
     }
 
@@ -148,7 +215,7 @@ class ItemController extends Controller
      * Inactive Items
      *
      * @author Thura Win
-     * @create 23/06/2023
+     * @create 28/06/2023
      * @param  \Illuminate\Http\Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -156,11 +223,11 @@ class ItemController extends Controller
     {
         try {
             Log::info($id);
-            $isInactive = new InactiveItem($id);
-            $isInactive->executeProcess();
+            $isActive = new InactiveItem($id);
+            $isActive->executeProcess();
 
-            if (!$isInactive) {
-                return response()->back()->withErrors(['message' => $isInactive]);
+            if (!$isActive) {
+                return response()->back()->withErrors(['message' => $isActive]);
             }
             return redirect()->back()->with(['success' => 'Items Inactivated!']);
         } catch (\Exception $e) {
@@ -215,13 +282,13 @@ class ItemController extends Controller
     public function show(Item $item, $id, $destinationPage, $sourcePage)
     {
         //
-        try {            
+        try {
             $showItem = $this->itemInterface->getItemById($id);
-    
+
             if (!$showItem) {
                 return redirect()->route('items.register-form')->withErrors(['message' => $showItem]);
             }
-    
+
             if ($destinationPage === 'detail') {
                 return view('detail-page', ['item' => $showItem]);
             } elseif ($destinationPage === 'update') {
@@ -261,11 +328,40 @@ class ItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Item  $item
+     * @author Thura Win
+     * @create 30/06/2023
+     * @param  \App\Models\Item  $item,Request $request
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Item $item)
+    public function destroy(ItemDeleteRequest $request)
     {
         //
+        try {
+            $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($request->txtId);
+
+            if(count($isItemUploadExists) > 0)
+            {
+                $deleteItemUpload = new DeleteItemUpload($request->txtId);
+
+                $isItemUploadDeleted = $deleteItemUpload->executeProcess();
+
+                if(!$isItemUploadDeleted)
+                {
+                    return redirect()->back()->withErrors(['message' => $isItemUploadDeleted]);
+                }
+            }
+
+            $deleteItem = new DeleteItem($request->txtId);
+
+            $isDeleted = $deleteItem->executeProcess();
+
+            if (!$isDeleted) {
+                return redirect()->back()->withErrors(['message' => $isDeleted]);
+            }
+
+            return redirect()->back()->with(['success' => 'Item deleted successfully']);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['message' => $e->getMessage()]);
+        }
     }
 }

@@ -5,7 +5,7 @@ namespace App\DBTransactions\Items;
 use App\Classes\DBTransaction;
 use App\Models\Item;
 
-class InactiveItem extends DBTransaction
+class DeleteItem extends DBTransaction
 {
     private $id;
 
@@ -16,12 +16,11 @@ class InactiveItem extends DBTransaction
 
     public function process()
     {
-        $inactiveItem = Item::find($this->id);
-        $inactiveItem->deleted_at = date('Y-m-d H:i:s');
-        $inactiveItem->update();
-        if (!$inactiveItem) {
+        $deleteItem = Item::find($this->id);
+        $deleteItem->delete();
+        if (!$deleteItem) {
            
-            return ['status' => false, 'error' => 'Fails to inactive'];
+            return ['status' => false, 'error' => $deleteItem];
         }
 
         return ['status' => true, 'error' => ''];
