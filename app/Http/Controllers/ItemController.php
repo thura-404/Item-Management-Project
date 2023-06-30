@@ -156,10 +156,21 @@ class ItemController extends Controller
     {
         try {
             if ($request->type  == 'excel') {
-                Log::info(unserialize(base64_decode($request->items)));
-                return Excel::download(new ItemsExport(unserialize(base64_decode($request->input('items')))), 'items.xlsx');
+                $searchResult = unserialize(base64_decode($request->input('items')));
+                $filteredItems = $searchResult->map(function ($item) {
+                    return [
+                        'Item ID' => $item->item_id,
+                        'Item Code' => $item->item_code,
+                        'Item Name' => $item->item_name,
+                        'Category' => $item->name,
+                        'Safety Stock' => $item->safety_stock,
+                        'Received Date' => $item->received_date,
+                        'Description' => $item->description,
+                    ];
+                });
+                return Excel::download(new ItemsExport($filteredItems), 'items.xlsx');
             } else if ($request->type == 'pdf') {
-                $result = new PDFDownload($request->items);
+                $result = new PDFDownload(unserialize(base64_decode($request->input('items'))));
                 return $result->downloadItemsAsPDF();
             }
         } catch (\Exception $e) {

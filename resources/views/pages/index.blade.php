@@ -207,11 +207,17 @@ New Item
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             <form action="{{ route('items.search-export') }}" method="POST">
+                                                @csrf
                                                 <input type="hidden" value="{{ base64_encode(serialize($items)) }}" name="items">
                                                 <input type="hidden" value="excel" name="type">
                                                 <button type="submit" class="dropdown-item">Download Excel</button>
                                             </form>
-                                            <a class="dropdown-item" href="#">Download Pdf</a>
+                                            <form action="{{ route('items.search-export') }}" method="POST">
+                                                @csrf
+                                                <input type="hidden" value="{{ base64_encode(serialize($items)) }}" name="items">
+                                                <input type="hidden" value="pdf" name="type">
+                                                <button type="submit" class="dropdown-item">Download PDF</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
