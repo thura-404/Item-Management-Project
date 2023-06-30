@@ -32,7 +32,7 @@ Route::group(['prefix' => 'items'], function(){
     Route::get('/{type}/export-all', 'ItemController@exportAllItems')->name('items.export-all');
     Route::post('/register', 'ItemController@store')->name('items.register');
     Route::post('/excel-register', 'ItemController@excelImport')->name('items.excel-register');
-    Route::post('/search', 'ItemController@search')->name('items.search');
+    Route::get('/search', 'ItemController@search')->name('items.search');
     Route::post('/search-export', 'ItemController@exportSearchItems')->name('items.search-export');
     Route::get('/{id}/active', 'ItemController@itemActive')->name('items.active');
     Route::get('/{id}/inactive', 'ItemController@itemInactive')->name('items.inactive');

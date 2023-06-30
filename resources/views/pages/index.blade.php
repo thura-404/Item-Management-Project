@@ -70,24 +70,24 @@ New Item
         <div class="text-center">
             <h1 class="h4 text-gray-900 mb-4">Search Items</h1>
         </div>
-        <form class="user" action="{{ route('items.search') }}" method="post" enctype="multipart/form-data">
+        <form class="user" action="{{ route('items.search') }}" method="get" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group row">
                 <div class="col-sm-2 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemId" class="form-control form-control-user" id="exampleFirstName" placeholder="Item ID">
+                    <input type="text" name="txtItemId" class="form-control form-control-user" id="exampleFirstName" placeholder="Item ID" value="{{ old('txtItemId') }}">
                 </div>
                 <div class="col-sm-2">
-                    <input type="text" name="txtCode" class="form-control form-control-user" id="exampleLastName" placeholder="Item Code">
+                    <input type="text" name="txtCode" class="form-control form-control-user" id="exampleLastName" value="{{ old('txtCode') }}" placeholder="Item Code">
                 </div>
                 <div class="col-sm-3 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemName" class="form-control form-control-user" id="exampleInputPassword" placeholder="Item Name">
+                    <input type="text" name="txtItemName" class="form-control form-control-user" id="exampleInputPassword" value="{{ old('txtItemName') }}" placeholder="Item Name">
                 </div>
                 <div class="col-sm-3">
                     <select name="cboCategories" id="cboCategories" class="form-control form-control-user-1">
                         <option value="" disabled selected hidden>Choose</option>
                         @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" {{ old('cboCategories') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                         @endforeach
                     </select>
 
@@ -239,7 +239,8 @@ New Item
                 @endif
 
 
-                {{ $items->links() }}
+                <!-- Display pagination links -->
+                {{ $items->appends(['txtItemId' => request('txtItemId'), 'txtCode' => request('txtCode'),  'txtName' => request('txtName'), 'cboCategories' => request('cboCategories')])->links() }}
             </div>
         </div>
     </div>

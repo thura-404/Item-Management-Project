@@ -32,7 +32,7 @@ class ItemController extends Controller
     {
         $this->itemInterface = $itemInterface;
         $this->categoryInterface = $categoryInterface;
-        $this->itemsUploadInterface = $itemsUploadInterface;    
+        $this->itemsUploadInterface = $itemsUploadInterface;
     }
 
 
@@ -63,8 +63,11 @@ class ItemController extends Controller
     {
         //
         try {
-            $searchResult = $this->itemInterface->searchItems($request); // search items
             $categories = $this->categoryInterface->getUsedCategories();
+            // Handle POST request
+            // Perform form processing, database operations, etc.
+
+            $searchResult = $this->itemInterface->searchItems($request); // search items
             if (!$searchResult) {
                 return view('pages.index')->with(['items' => $searchResult])->with('categories', $categories);
             }
@@ -350,14 +353,12 @@ class ItemController extends Controller
         try {
             $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($request->txtId);
 
-            if(count($isItemUploadExists) > 0)
-            {
+            if (count($isItemUploadExists) > 0) {
                 $deleteItemUpload = new DeleteItemUpload($request->txtId);
 
                 $isItemUploadDeleted = $deleteItemUpload->executeProcess();
 
-                if(!$isItemUploadDeleted)
-                {
+                if (!$isItemUploadDeleted) {
                     return redirect()->back()->withErrors(['message' => $isItemUploadDeleted]);
                 }
             }
