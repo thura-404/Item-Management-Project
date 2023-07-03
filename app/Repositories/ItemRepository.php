@@ -26,9 +26,10 @@ class ItemRepository implements ItemInterface
     public function getAllItems()
     {
         return Item::join('categories', 'items.category_id', '=', 'categories.id')
-                    ->select('items.*', 'categories.name as name')
-                    ->orderBy('item_id', 'desc')
-                    ->paginate(20);
+            ->leftJoin('items_uploads', 'items.id', '=', 'items_uploads.item_id')
+            ->select('items.*', 'categories.name as name', 'items_uploads.file_path as image')
+            ->orderBy('item_id', 'desc')
+            ->paginate(20);
     }
 
     /**
@@ -40,7 +41,10 @@ class ItemRepository implements ItemInterface
      */
     public function getItemById($id)
     {
-        return Item::find($id)->toArray();
+        return Item::join('categories', 'items.category_id', '=', 'categories.id')
+        ->leftJoin('items_uploads', 'items.id', '=', 'items_uploads.item_id')
+        ->select('items.*', 'categories.name as name', 'items_uploads.file_path as image')
+            ->find($id)->toArray();
     }
 
 
@@ -74,7 +78,7 @@ class ItemRepository implements ItemInterface
     public function searchItems($data)
     {
         $searchItems = Item::join('categories', 'items.category_id', '=', 'categories.id')
-                            ->select('items.*', 'categories.name as name');
+            ->select('items.*', 'categories.name as name');
 
         if (!empty($data['txtItemId'])) {
             $searchItems->where('items.item_id', "LIKE", $data['txtItemId']);
@@ -88,13 +92,11 @@ class ItemRepository implements ItemInterface
             $searchItems->where('items.item_name', "LIKE", $data['txtItemName']);
         }
 
-        if(!empty($data['cboCategories'])){
+        if (!empty($data['cboCategories'])) {
             $searchItems->where('categories.id', "=", $data['cboCategories']);
         }
 
-        $searchResults = $searchItems->paginate(20);
-
-        return $searchResults;
+        return $searchItems;
     }
 
     /**
@@ -106,8 +108,24 @@ class ItemRepository implements ItemInterface
     public function downloadItems()
     {
         $searchItems = Item::join('categories', 'items.category_id', '=', 'categories.id')
-                        ->select('items.item_id', 'items.item_code', 'items.item_name', 'categories.name', 'items.safety_stock', 'items.received_date', 'items.description')
-                        ->get();        
+            ->select('items.item_id', 'items.item_code', 'items.item_name', 'categories.name', 'items.safety_stock', 'items.received_date', 'items.description')
+            ->get();
         return $searchItems;
+    }
+
+    /**
+     * suggest Items.
+     * @author Thura Win
+     * @create 03/07/2023
+     * @return array
+     */
+    public function autoCompleteItems($data)
+    {
+        $suggestItems = Item::where('item_id', 'like', '%' . $data['term'] . '%')
+            ->orWhere('item_code', 'like', '%' . $data['term'] . '%')
+            ->orWhere('item_name', 'like', '%' . $data['term'] . '%')
+            ->limit(10)
+            ->get(['item_id', 'item_code', 'item_name']);
+        return $suggestItems;
     }
 }

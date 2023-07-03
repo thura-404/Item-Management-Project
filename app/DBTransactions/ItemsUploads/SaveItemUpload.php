@@ -45,7 +45,7 @@ class SaveItemUpload extends DBTransaction
         $uniqueFileName = $itemID . $fileName;
 
         //public folder
-        $fileSave = $file->move(public_path('upload_file'), $uniqueFileName); //save file        
+        $fileSave = $file->move('upload_file', $uniqueFileName)->getPathname(); //save file        
 
         $fileSize = filesize($fileSave);
 

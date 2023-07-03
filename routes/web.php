@@ -33,11 +33,16 @@ Route::group(['prefix' => 'items'], function(){
     Route::post('/register', 'ItemController@store')->name('items.register');
     Route::post('/excel-register', 'ItemController@excelImport')->name('items.excel-register');
     Route::get('/search', 'ItemController@search')->name('items.search');
-    Route::post('/search-export', 'ItemController@exportSearchItems')->name('items.search-export');
-    Route::get('/{id}/active', 'ItemController@itemActive')->name('items.active');
-    Route::get('/{id}/inactive', 'ItemController@itemInactive')->name('items.inactive');
-    Route::get('/{id}/detail', 'ItemController@show')->name('items.detail');
-    Route::get('/{id}/update', 'ItemsUploadController@edit')->name('items.update');
+    Route::get('/search-export', 'ItemController@exportSearchItems')->name('items.search-export');
+    Route::get('/suggestions', 'ItemController@autoComplete')->name('items.suggestions');
+
+    Route::group(['prefix' => '/{id}'], function(){
+        Route::get('/active', 'ItemController@itemActive')->name('items.active');
+        Route::get('/inactive', 'ItemController@itemInactive')->name('items.inactive');
+        Route::get('/detail', 'ItemController@show')->name('items.detail');
+        Route::get('/update', 'ItemController@show')->name('items.update');
+        Route::patch('/update-data', 'ItemController@update')->name('items.update-data');
+    });
     Route::delete('/delete', 'ItemController@destroy')->name('items.delete');
 });
 

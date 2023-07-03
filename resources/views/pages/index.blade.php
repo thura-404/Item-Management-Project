@@ -75,30 +75,28 @@ New Item
 
             <div class="form-group row">
                 <div class="col-sm-2 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemId" class="form-control form-control-user" id="exampleFirstName" placeholder="Item ID" value="{{ old('txtItemId') }}">
+                    <input type="text" name="txtItemId" class="form-control form-control-user" id="item_id" placeholder="Item ID" value="{{ $formData['txtItemId'] ?? '' }}">
                 </div>
                 <div class="col-sm-2">
-                    <input type="text" name="txtCode" class="form-control form-control-user" id="exampleLastName" value="{{ old('txtCode') }}" placeholder="Item Code">
+                    <input type="text" name="txtCode" class="form-control form-control-user" id="item_code" value="{{ $formData['txtCode'] ?? '' }}" placeholder="Item Code">
                 </div>
                 <div class="col-sm-3 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemName" class="form-control form-control-user" id="exampleInputPassword" value="{{ old('txtItemName') }}" placeholder="Item Name">
+                    <input type="text" name="txtItemName" class="form-control form-control-user" id="item_name" value="{{ $formData['txtItemName'] ?? '' }}" placeholder="Item Name">
                 </div>
                 <div class="col-sm-3">
                     <select name="cboCategories" id="cboCategories" class="form-control form-control-user-1">
                         <option value="" disabled selected hidden>Choose</option>
                         @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('cboCategories') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        <option value="{{ $category->id }}" {{ isset($formData['cboCategories']) && $formData['cboCategories'] == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                         @endforeach
                     </select>
-
                 </div>
                 <div class="col-sm-2">
                     <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSearch" value="Search">
                 </div>
-
             </div>
-
         </form>
+
     </div>
 
 
@@ -162,13 +160,13 @@ New Item
 
                             </td>
                             <td>
-                                <a href="{{ $item['id'] }}" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Details">
+                                <a href="{{ route('items.detail', ['id' => $item['id']]) }}" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Details">
                                     <span class="text">
                                         <i class="fas fa-info-circle"></i>
                                     </span>
                                 </a>
                                 @if ($item['deleted_at'] == null)
-                                <a href="" class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Update">
+                                <a href="{{ route('items.update', ['id' => $item['id']]) }}" class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Update">
                                     <span class="text">
                                         <i class="fas fa-wrench"></i>
                                     </span>
@@ -206,15 +204,21 @@ New Item
                                             Download Search Result
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <form action="{{ route('items.search-export') }}" method="POST">
+                                            <form action="{{ route('items.search-export') }}" method="get">
                                                 @csrf
-                                                <input type="hidden" value="{{ base64_encode(serialize($items)) }}" name="items">
+                                                <input type="hidden" value="{{ $formData['txtItemId'] ?? '' }}" name="txtItemId">
+                                                <input type="hidden" value="{{ $formData['txtCode'] ?? '' }}" name="txtCode">
+                                                <input type="hidden" value="{{ $formData['txtName'] ?? '' }}" name="txtItemName">
+                                                <input type="hidden" value="{{ $formData['cboCategories'] ?? '' }}" name="cboCategories">
                                                 <input type="hidden" value="excel" name="type">
                                                 <button type="submit" class="dropdown-item">Download Excel</button>
                                             </form>
-                                            <form action="{{ route('items.search-export') }}" method="POST">
+                                            <form action="{{ route('items.search-export') }}" method="get">
                                                 @csrf
-                                                <input type="hidden" value="{{ base64_encode(serialize($items)) }}" name="items">
+                                                <input type="hidden" value="{{ $formData['txtItemId'] ?? '' }}" name="txtItemId">
+                                                <input type="hidden" value="{{ $formData['txtCode'] ?? '' }}" name="txtCode">
+                                                <input type="hidden" value="{{ $formData['txtName'] ?? '' }}" name="txtItemName">
+                                                <input type="hidden" value="{{ $formData['cboCategories'] ?? '' }}" name="cboCategories">
                                                 <input type="hidden" value="pdf" name="type">
                                                 <button type="submit" class="dropdown-item">Download PDF</button>
                                             </form>
@@ -305,7 +309,7 @@ New Item
 <div class="modal fade" id="itemDeleteModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header ">
                 <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Delete Item?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -318,12 +322,12 @@ New Item
                 <p>Category Name: <span id="deleteModalCategoryName"></span></p>
                 <p>Safety Stock: <span id="deleteModalSafetyStock"></span></p>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer bg-light shadow-sm">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <form action="{{ route('items.delete') }}" method="POST">
                     @csrf @method('DELETE')
                     <input type="hidden" value="" name="txtId" id="deleteID">
-                    <button type="submit" class="btn btn-primary" id="modelDeleteChange">Delete</button>
+                    <button type="submit" class="btn btn-danger" id="modelDeleteChange">Delete</button>
                 </form>
             </div>
         </div>
@@ -335,6 +339,7 @@ New Item
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -393,7 +398,6 @@ New Item
             $('#deleteModalCategoryName').text(categoryName);
             $('#deleteModalSafetyStock').text(safetyStock);
         });
-
     });
 </script>
 

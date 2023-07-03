@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use stdClass;
 use App\Models\Item;
 use App\Exports\ItemsExport;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ use App\DBTransactions\Items\InactiveItem;
 use App\Http\Requests\ItemRegisterRequest;
 use App\DBTransactions\ItemsUploads\SaveItemUpload;
 use App\DBTransactions\ItemsUploads\DeleteItemUpload;
+use App\DBTransactions\ItemsUploads\UpdateItemUpload;
 
 class ItemController extends Controller
 {
@@ -64,15 +66,21 @@ class ItemController extends Controller
         //
         try {
             $categories = $this->categoryInterface->getUsedCategories();
+            $formData = [
+                'txtItemId' => $request->input('txtItemId'),
+                'txtCode' => $request->input('txtCode'),
+                'txtItemName' => $request->input('txtItemName'),
+                'cboCategories' => $request->input('cboCategories'),
+            ];
+
             // Handle POST request
             // Perform form processing, database operations, etc.
-
-            $searchResult = $this->itemInterface->searchItems($request); // search items
+            $searchItems = $this->itemInterface->searchItems($request); // search items
+            $searchResult = $searchItems->paginate(2);
             if (!$searchResult) {
                 return view('pages.index')->with(['items' => $searchResult])->with('categories', $categories);
             }
-            $_SESSION['searchDownlaod'] = $searchResult;
-            return view('pages.index')->with('items', $searchResult)->with('categories', $categories)->with('search', true);
+            return view('pages.index')->with('items', $searchResult)->with('categories', $categories)->with('formData', $formData)->with('search', true);
         } catch (\Exception $e) {
             return view('pages.index')->withErrors(['message' => $e->getMessage()])->with('categories', $categories);
         }
@@ -131,14 +139,14 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return Excel File.
      */
-    public function exportAllItems($type)
+    public function exportAllItems(Request $request, $type)
     {
         try {
+            $itemsToDownload = $this->itemInterface->downloadItems();
             if ($type == 'excel') {
-                $itemsToDownload = $this->itemInterface->downloadItems();
+
                 return Excel::download(new ItemsExport($itemsToDownload), 'items.xlsx');
             } else if ($type == 'pdf') {
-                $itemsToDownload = $this->itemInterface->downloadItems();
                 $result = new PDFDownload($itemsToDownload);
                 return $result->downloadItemsAsPDF();
             }
@@ -158,24 +166,33 @@ class ItemController extends Controller
     public function exportSearchItems(Request $request)
     {
         try {
+            $searchItems = $this->itemInterface->searchItems($request); // search items
+            $searchResult = $searchItems->get();
+            if (!$searchResult) {
+                return redirect()->back()->with(['items' => $searchResult]);
+            }
+
+            $filteredItems = $searchResult->map(function ($item) {
+                $filteredItem = new stdClass();
+                $filteredItem->item_id = $item->item_id;
+                $filteredItem->item_code = $item->item_code;
+                $filteredItem->item_name = $item->item_name;
+                $filteredItem->name = $item->name;
+                $filteredItem->safety_stock = $item->safety_stock;
+                $filteredItem->received_date = $item->received_date;
+                $filteredItem->description = $item->description;
+
+                return $filteredItem;
+            });
+
             if ($request->type  == 'excel') {
-                $searchResult = unserialize(base64_decode($request->input('items')));
-                $filteredItems = $searchResult->map(function ($item) {
-                    return [
-                        'Item ID' => $item->item_id,
-                        'Item Code' => $item->item_code,
-                        'Item Name' => $item->item_name,
-                        'Category' => $item->name,
-                        'Safety Stock' => $item->safety_stock,
-                        'Received Date' => $item->received_date,
-                        'Description' => $item->description,
-                    ];
-                });
                 return Excel::download(new ItemsExport($filteredItems), 'items.xlsx');
             } else if ($request->type == 'pdf') {
-                $result = new PDFDownload(unserialize(base64_decode($request->input('items'))));
+                $result = new PDFDownload($filteredItems);
                 return $result->downloadItemsAsPDF();
             }
+
+            return redirect()->back()->with('items', $searchResult)->with('search', true);
         } catch (\Exception $e) {
             return redirect()->route('items.list')->withErrors(['message' => $e->getMessage()]);
         }
@@ -196,6 +213,26 @@ class ItemController extends Controller
             Excel::import(new ItemRegisterExcelImport($this->itemInterface, $this->categoryInterface), $file);
 
             return redirect()->route('items.excel-form')->with(['success' => 'Items saved successfully']);
+        } catch (\Exception $e) {
+            return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * suggest items for autocomplete.
+     *
+     * @author Thura Win
+     * @create 03/07/2023
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function autoComplete(Request $request)
+    {
+        try {
+            Log::info($request);
+            $suggestItems = $this->itemInterface->autoCompleteItems($request);
+            Log::info($suggestItems);
+            return response()->json($suggestItems);
         } catch (\Exception $e) {
             return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);
         }
@@ -293,24 +330,25 @@ class ItemController extends Controller
      * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function show(Item $item, $id, $destinationPage, $sourcePage)
+    public function show($id)
     {
         //
         try {
             $showItem = $this->itemInterface->getItemById($id);
+            $categories = $this->categoryInterface->getAllCategories();
+
 
             if (!$showItem) {
                 return redirect()->route('items.register-form')->withErrors(['message' => $showItem]);
             }
 
-            if ($destinationPage === 'detail') {
-                return view('detail-page', ['item' => $showItem]);
-            } elseif ($destinationPage === 'update') {
-                return view('update-page', ['item' => $showItem]);
-            } else {
-                // Invalid page type, handle the error or redirect to an appropriate route
-                return redirect()->route('items.register-form')->withErrors(['message' => 'Invalid page type']);
+            if (request()->route()->getName() === 'items.detail') { // If the page is detail page
+                return view('pages.detail')->with(['item' => $showItem]);
+            } elseif (request()->route()->getName() === 'items.update') { // If the page is update page
+                return view('pages.update')->with(['item' => $showItem])->with(['categories' => $categories]);
             }
+
+            return redirect()->route('items.list');
         } catch (\Exception $e) {
             return redirect()->route('items.register-form')->withErrors(['message' => $e->getMessage()]);
         }
@@ -334,9 +372,34 @@ class ItemController extends Controller
      * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Item $item)
+    public function update(Request $request, $id)
     {
         //
+        try {
+            $updateItem = new SaveItem($request, $id);
+
+            $result = $updateItem->executeProcess();
+            if (!$result) {
+                return redirect()->route('items.update-data')->withErrors(['message' => $result]);
+            }
+
+            if ($request->hasFile('filImage')) { // File field is not empty
+
+
+                $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
+
+                $uploadResult = $updateItemsUpload->executeProcess();
+
+                if (!$uploadResult) {
+                    return redirect()->route('items.update-data')->withErrors(['message' => 'Error updating Item Image']);
+                }
+            }
+
+
+            return redirect()->route('items.update-data')->with(['success' => 'Item created successfully']);
+        } catch (\Exception $e) {
+            return redirect()->route('items.update-data')->withErrors(['message' => $e->getMessage()]);
+        }
     }
 
     /**

@@ -167,33 +167,26 @@ page-top
     </div>
     @endif
 
-    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-        <a href="{{ route('items.register-form') }}" class="btn btn-secondary active">
-            <input type="radio" name="options" id="option1" autocomplete="off" checked> Register Manually
-        </a>
-        <a href="{{ route('items.excel-form') }}" class="btn btn-secondary">
-            <input type="radio" name="options" id="option2" autocomplete="off"> Add Excel File
-        </a>
-    </div>
+    @yield('form-switch')
 
     <div class="p-1">
         <div class="text-center">
             <h1 class="h4 text-gray-900 mb-4">Enter Items Details</h1>
 
         </div>
-        <form class="user" action="{{ route('items.register') }}" method="post" enctype="multipart/form-data">
-            @csrf
+        <form class="user" action="@yield('form-action')" method="post" enctype="multipart/form-data">
+            @csrf @yield('form-method')
             <div class="file-upload mb-2">
                 <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
 
-                <div class="image-upload-wrap">
+                <div class="image-upload-wrap" @yield('image-display-none')>
                     <input class="file-upload-input" type='file' name="filImage" onchange="readURL(this);" accept="image/*" />
                     <div class="drag-text">
                         <h3>Drag and drop a file or select add Image</h3>
                     </div>
                 </div>
-                <div class="file-upload-content">
-                    <img class="file-upload-image" src="#" alt="your image" />
+                <div class="file-upload-content" @yield('image-display-block')>
+                    <img class="file-upload-image" @yield('image-value') src="#" alt="your image" />
                     <div class="image-title-wrap">
                         <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
                     </div>
@@ -201,49 +194,46 @@ page-top
             </div>
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemID" class="form-control form-control-user" id="exampleFirstName" value="{{ $itemId }}" readonly placeholder="Item ID">
+                    <input type="text" name="txtItemID" class="form-control form-control-user" id="exampleFirstName" value="@yield('item-id')" readonly placeholder="Item ID">
                 </div>
                 <div class="col-sm-6">
-                    <input type="text" name="txtCode" class="form-control form-control-user" id="exampleLastName" value="{{ old('txtCode') }}" placeholder="Item Code">
+                    <input type="text" name="txtCode" class="form-control form-control-user" id="exampleLastName" @yield('code-value') value="{{ old('txtCode') }}" @yield('read-only') placeholder="Item Code">
                 </div>
             </div>
             <div class="form-group">
-                <input type="text" name="txtName" class="form-control form-control-user" id="exampleInputEmail" value="{{ old('txtName') }}" placeholder="Item Name">
+                <input type="text" name="txtName" class="form-control form-control-user" id="exampleInputEmail" @yield('name-value') value="{{ old('txtName') }}" @yield('read-only') placeholder="Item Name">
             </div>
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="number" name="txtStock" class="form-control form-control-user" min="0" id="exampleInputPassword" value="{{ old('txtStock') }}" placeholder="Safety Stock">
+                    <input type="number" name="txtStock" class="form-control form-control-user" min="0" id="exampleInputPassword" @yield('stock-value') value="{{ old('txtStock') }}" @yield('read-only') placeholder="Safety Stock">
                 </div>
                 <div class="col-sm-6">
-                    <input type="date" name="txtDate" class="form-control form-control-user" id="exampleRepeatPassword" value="{{ old('txtDate') }}" placeholder="Recieve Date">
+                    <input type="date" name="txtDate" class="form-control form-control-user" id="exampleRepeatPassword" @yield('date-value') value="{{ old('txtDate') }}" @yield('read-only') placeholder="Recieve Date">
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-10 mb-3 mb-sm-0">
-                    <select name="cbocategories" id="cbocategories" class="form-control form-control-user-1">
-                        <option disabled selected hidden value="">Select Category</option>
-                        @foreach ($categories as $category)
-                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                        @endforeach
+                    <select name="cbocategories" id="cbocategories" @yield('read-only') class="form-control form-control-user-1">
+                        @yield('categories')
                     </select>
                 </div>
                 <div class="col-sm-1">
                     <!-- <input type="text" class="form-control form-control-user" id="exampleRepeatPassword" disabled style="font-size:x-large;" placeholder="&#43;"> -->
 
                     <!-- Button trigger modal -->
-                    <button type="button" class="form-control form-control-user d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#saveCategory">
+                    <button type="button" class="form-control form-control-user d-flex align-items-center justify-content-center" data-toggle="modal"  @yield('read-only') data-target="#saveCategory">
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
                 <div class="col-sm-1">
-                    <button type="button" id="btnMinus" class="form-control form-control-user d-flex align-items-center justify-content-center" data-toggle="modal" data-target="#deleteCategory">
+                    <button type="button" id="btnMinus" class="form-control form-control-user d-flex align-items-center justify-content-center" @yield('read-only') data-toggle="modal" data-target="#deleteCategory">
                         <i class="fas fa-minus"></i>
                     </button>
                     <!-- <input type="text" class="form-control form-control-user" id="exampleRepeatPassword" disabled style="font-size:x-large;" placeholder="&#8722"> -->
                 </div>
             </div>
             <div class="form-group">
-                <textarea name="txtDescription" id="exampleInputEmail" class="form-control form-control-user" cols="30" rows="2" placeholder="Description">{{ old('txtDescription') }}</textarea>
+                <textarea name="txtDescription" id="exampleInputEmail" class="form-control form-control-user" cols="30" rows="2" @yield('read-only') placeholder="Description">@yield('description-value'){{ old('txtDescription') }}</textarea>
             </div>
             <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSave" value="Save Item">
         </form>

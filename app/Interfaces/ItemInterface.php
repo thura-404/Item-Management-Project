@@ -13,5 +13,7 @@ interface ItemInterface
 
     public function searchItems($data);
 
+    public function autoCompleteItems($data);
+
     public function downloadItems();
 }

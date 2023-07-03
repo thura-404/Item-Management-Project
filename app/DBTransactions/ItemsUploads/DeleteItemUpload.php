@@ -18,7 +18,10 @@ class DeleteItemUpload extends DBTransaction
     public function process()
     {
         $deleteItemUpload = ItemsUpload::where('item_id', $this->id);
+        $deleteItemUploadImage = $deleteItemUpload->first()->toArray(); 
+        unlink($deleteItemUploadImage['file_path']);
         $deleteItemUpload->delete();
+
         if (!$deleteItemUpload) {
             return ['status' => false, 'error' => $deleteItemUpload];
         }
