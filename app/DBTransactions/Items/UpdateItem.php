@@ -26,11 +26,11 @@ class UpdateItem extends DBTransaction
         $updateItem->received_date = $this->request['txtDate'];
         $updateItem->description = $this->request['txtDescription'];
         $updateItem->update();
-        if (!$updateItem) {
-           
-            return ['status' => false, 'error' => 'Fails to Update Class'];
+        if ($updateItem) {
+            $primaryKey = $updateItem->id;
+            return ['status' => true, 'primary_key' => $primaryKey];
+        } else {
+            return ['status' => false, 'error' => 'Fails to update Item'];
         }
-
-        return ['status' => true, 'error' => ''];
     }
 }

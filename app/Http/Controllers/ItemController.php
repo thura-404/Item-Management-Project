@@ -21,6 +21,7 @@ use App\Imports\ItemRegisterExcelImport;
 use App\DBTransactions\Items\PDFDownload;
 use App\Http\Requests\ExcelImportRequest;
 use App\DBTransactions\Items\InactiveItem;
+use App\DBTransactions\Items\UpdateItem;
 use App\Http\Requests\ItemRegisterRequest;
 use App\DBTransactions\ItemsUploads\SaveItemUpload;
 use App\DBTransactions\ItemsUploads\DeleteItemUpload;
@@ -338,7 +339,7 @@ class ItemController extends Controller
             $categories = $this->categoryInterface->getAllCategories();
 
 
-            if (!$showItem) {
+            if (!$showItem) { // If item not found
                 return redirect()->route('items.register-form')->withErrors(['message' => $showItem]);
             }
 
@@ -369,36 +370,59 @@ class ItemController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Item  $item
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ItemRegisterRequest $request, $id)
     {
         //
         try {
-            $updateItem = new SaveItem($request, $id);
+            $updateItem = new UpdateItem($request, $id);
 
             $result = $updateItem->executeProcess();
-            if (!$result) {
-                return redirect()->route('items.update-data')->withErrors(['message' => $result]);
+            if (!$result) { // If error 
+                return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => $result]);
             }
-
             if ($request->hasFile('filImage')) { // File field is not empty
 
+                $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($id);
 
-                $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
+                if (count($isItemUploadExists) > 0) { // If image already exists
 
-                $uploadResult = $updateItemsUpload->executeProcess();
+                    $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
 
-                if (!$uploadResult) {
-                    return redirect()->route('items.update-data')->withErrors(['message' => 'Error updating Item Image']);
+                    $uploadResult = $updateItemsUpload->executeProcess();
+
+                    if (!$uploadResult) { // If image not updated
+                        return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => 'Error updating Item Image']);
+                    }
+                }
+
+                $newItemsUpload = new SaveItemUpload($request, $result['primary_key']);
+
+                $uploadResult = $newItemsUpload->executeProcess();
+
+                if (!$uploadResult) { // If image not saved
+                    return redirect()->route('items.register-form')->withErrors(['message' => 'Error saving Image']);
+                }
+            } elseif ($request->remove_image) { // If remove image button is clicked on view
+                $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($id);
+
+                if (count($isItemUploadExists) > 0) { // If image already exists
+
+                    $deleteItemUpload = new DeleteItemUpload($result['primary_key']);
+
+                    $isItemUploadDeleted = $deleteItemUpload->executeProcess();
+
+                    if (!$isItemUploadDeleted) { // If image not deleted
+                        return redirect()->back()->withErrors(['message' => $isItemUploadDeleted]);
+                    }
                 }
             }
 
 
-            return redirect()->route('items.update-data')->with(['success' => 'Item created successfully']);
-        } catch (\Exception $e) {
-            return redirect()->route('items.update-data')->withErrors(['message' => $e->getMessage()]);
+            return redirect()->route('items.update', ['id' => $id])->with(['success' => 'Item updated successfully']);
+        } catch (\Exception $e) { // If error 
+            return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => $e->getMessage()]);
         }
     }
 

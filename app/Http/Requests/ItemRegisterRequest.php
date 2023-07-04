@@ -35,8 +35,8 @@ class ItemRegisterRequest extends FormRequest
             'txtItemID' => 'required',
             'txtCode' => 'required',
             'txtName' => 'required',
-            'txtStock' => 'required',
-            'txtDate' => 'required',
+            'txtStock' => 'required|numeric',
+            'txtDate' => 'required|date',
             'cbocategories' => 'required|exists:categories,id',
             'filImage' => 'mimes:jpeg,png,jpg,gif|max:2048'
         ];
@@ -56,7 +56,9 @@ class ItemRegisterRequest extends FormRequest
             'txtCode.required' => 'Code is Required',
             'txtName.required' => 'Name is Required',
             'txtStock.required' => 'Stock is Required',
+            'txtStock.numeric' => 'Stock must be a number',
             'txtDate.required' => 'Date is Required',
+            'txtDate.date' => 'Date is Invalid',
             'cbocategories.required' => 'Category is Required',
             'cbocategories.exists' => 'Category is Invalid',
             'filImage.mimes' => 'Image must be an image',

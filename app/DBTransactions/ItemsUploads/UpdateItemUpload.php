@@ -4,6 +4,7 @@ namespace App\DBTransactions\ItemsUploads;
 
 use App\Classes\DBTransaction;
 use App\Models\ItemsUpload;
+use Illuminate\Support\Facades\Log;
 
 class UpdateItemUpload extends DBTransaction
 {
@@ -32,7 +33,13 @@ class UpdateItemUpload extends DBTransaction
 
         $fileSize = filesize($fileSave);
 
-        $updateItemUpload = ItemsUpload::find($this->id);
+        Log::info($fileSave);
+        Log::info($fileExtension);
+        Log::info($fileSize);
+        Log::info($this->id);
+        Log::info($this->itemPrimaryId);
+
+        $updateItemUpload = ItemsUpload::where('item_id', $this->id)->first();
         $updateItemUpload->file_path = $fileSave;
         $updateItemUpload->file_type = $fileExtension;
         $updateItemUpload->file_size = $fileSize;

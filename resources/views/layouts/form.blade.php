@@ -186,7 +186,9 @@ page-top
                     </div>
                 </div>
                 <div class="file-upload-content" @yield('image-display-block')>
-                    <img class="file-upload-image" @yield('image-value') src="#" alt="your image" />
+                    <img class="file-upload-image" @yield('image-value') src="" alt="your image" />
+                    <!-- Hidden input field to track removal -->
+                    <input type="hidden" name="remove_image" id="removeImageFlag" value="">
                     <div class="image-title-wrap">
                         <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
                     </div>
@@ -221,7 +223,7 @@ page-top
                     <!-- <input type="text" class="form-control form-control-user" id="exampleRepeatPassword" disabled style="font-size:x-large;" placeholder="&#43;"> -->
 
                     <!-- Button trigger modal -->
-                    <button type="button" class="form-control form-control-user d-flex align-items-center justify-content-center" data-toggle="modal"  @yield('read-only') data-target="#saveCategory">
+                    <button type="button" class="form-control form-control-user d-flex align-items-center justify-content-center" data-toggle="modal" @yield('read-only') data-target="#saveCategory">
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
@@ -306,6 +308,194 @@ page-top
     <i class="fas fa-angle-up"></i>
 </a>
 
-@yield('form-scripts')
+
+@section('js')
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+
+                $('.image-upload-wrap').hide();
+
+                $('.file-upload-image').attr('src', e.target.result);
+                $('.file-upload-content').show();
+
+                $('.image-title').html(input.files[0].name);
+
+            };
+
+            reader.readAsDataURL(input.files[0]);
+
+        } else {
+            removeUpload();
+        }
+    }
+
+    var src = $('.file-upload-image').attr('src');
+    if (src === null || src === "") {
+        removeUpload();
+    }
+
+    function removeUpload() {
+        $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+        $('.file-upload-input').val('');
+        $('#removeImageFlag').val(true);
+        $('.file-upload-content').hide();
+        $('.image-upload-wrap').show();
+    }
+
+
+    $('.image-upload-wrap').bind('dragover', function() {
+        $('.image-upload-wrap').addClass('image-dropping');
+    });
+    $('.image-upload-wrap').bind('dragleave', function() {
+        $('.image-upload-wrap').removeClass('image-dropping');
+    });
+
+    // Add Category (* On click save button)
+    $('#saveCategoryButton').click(function() {
+        var categoryName = $('#CategoryName').val();
+
+        // Check if category name is empty
+        if (categoryName == '') {
+            alert('Category name cannot be empty');
+            return;
+        }
+
+        // Check if category already exists
+        var exists = false;
+        $('#cbocategories option').each(function() {
+            if ($(this).text() == categoryName) {
+                exists = true;
+                alert('Category already exists!');
+                return;
+            }
+        });
+
+        // Perform AJAX request to save the category
+        $.ajax({
+            url: "{{ route('categories.register') }}",
+            method: "POST",
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "name": categoryName
+            },
+            success: function(response) {
+
+                // Clear the select box options
+                $('#cbocategories').empty();
+
+                // Add the new category options to the select box
+                $.each(response, function(index, category) {
+                    var option = $('<option>').text(category.name).val(category.id);
+                    $('#cbocategories').append(option);
+                });
+
+                // Hide the dialog box and clear the input
+                $('#saveCategory').hide();
+                $('#CategoryName').val('');
+
+                //Remove background backdrop
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+
+
+            },
+            error: function(xhr, status, error) {
+
+                // Hide the dialog box and clear the input
+                $('#saveCategory').hide();
+                $('#CategoryName').val('');
+
+                //Remove background backdrop
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+
+                // Show error message
+                if (xhr.status == 422) {
+                    var errors = xhr.responseJSON.errors;
+                    var errorHtml = '<ul>';
+                    $.each(errors, function(key, value) {
+                        errorHtml += '<li>' + value[0] + '</li>';
+                    });
+                    errorHtml += '</ul>';
+
+                    $('#error-message').show();
+                    $('#error-message .card-body').html(errorHtml);
+                    setTimeout(function() {
+                        $('#error-message').hide();
+                    }, 3000);
+                }
+            }
+        });
+    });
+
+
+    // show deletable categories (On click minus button)
+    $('#btnMinus').click(function() {
+
+        $.ajax({
+            url: "{{ route('categories.deletable') }}",
+            method: "GET",
+            data: {
+                "_token": "{{ csrf_token() }}"
+            },
+            success: function(response) {
+                //Update the select box with the updated category options
+                $('#cboDelCategories').html(response.html);
+
+            },
+            error: function(xhr, status, error) {
+                // Show error message
+                alert('Error', 'Failed to fetch categories');
+            }
+        });
+
+    });
+
+    // delete category (* On click delete button)
+    $('#deleteCategoryButton').click(function() {
+        var categoryId = $('#cboDelCategories').val();
+        console.log(categoryId);
+
+        // Perform AJAX request to delete the category
+        $.ajax({
+            url: "{{ route('categories.delete') }}",
+            method: "POST",
+            data: {
+                "_token": "{{ csrf_token() }}",
+                "id": categoryId
+            },
+            success: function(response) {
+
+                // Clear the select box options
+                $('#cbocategories').empty();
+
+                // Add the new category options to the select box
+                $.each(response, function(index, category) {
+                    var option = $('<option>').text(category.name).val(category.id);
+                    $('#cbocategories').append(option);
+                });
+
+                // Hide the dialog box and clear the input
+                $('#deleteCategory').hide();
+
+                //Remove background backdrop
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+            },
+            error: function(xhr, status, error) {
+                console.log('error');
+                console.log(error);
+            }
+        });
+    });
+</script>
+@endsection
 
 @endsection
