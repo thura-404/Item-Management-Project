@@ -44,7 +44,7 @@ class ItemRepository implements ItemInterface
         return Item::join('categories', 'items.category_id', '=', 'categories.id')
         ->leftJoin('items_uploads', 'items.id', '=', 'items_uploads.item_id')
         ->select('items.*', 'categories.name as name', 'items_uploads.file_path as image')
-            ->find($id)->toArray();
+            ->find($id);
     }
 
 

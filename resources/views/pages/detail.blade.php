@@ -25,141 +25,161 @@ Back
 <!-- Begin Page Content -->
 <div class="container-fluid">
     @if($errors->any())
-    <div class="card mb-4 py-3 border-bottom-danger" id="error-message">
-        <div class="card-body">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="card mb-4 py-3 border-bottom-dander alert alert-light alert-dismissible fade show" role="alert">
+        <strong>Error!</strong>
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     @endif
 
     @if (session('success'))
-    <div class="card mb-4 py-3 border-bottom-success" id="success-message">
-        <div class="card-body">
-            {{ session('success') }}
-        </div>
+    <div class="card mb-4 py-3 border-bottom-success alert alert-light alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     @endif
 
 
-    <div class="card mb-3">
-        @if (!$item['image'] == null)
-        <div class="shadow-sm rounded" style="width: 98%; max-height: auto; margin-left: 1%; margin-top: -1%; border-radius: .5rem;">
-            <img class="card-img-top rounded" src="{{ $item['image'] ? asset($item['image']) : '' }}" alt="Card image cap">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <a href="{{ route('items.list')  }}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Item List</span>
+            </a>
+            <div class="dropdown no-arrow">
+                <a class="dropdown-toggle text-dark" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-900"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink" style="">
+                    <div class="dropdown-header">Actions :</div>
+                    @if ($item['deleted_at'] == null)
+                    <a class="dropdown-item" href="{{ route('items.update', ['id' => $item['id']] ) }}">Update</a>
+                    @else
+                    <div data-toggle="tooltip" title="Feature Disabled for Inactive Items!">
+                        <a class="dropdown-item disabled" disabled href="#" data-toggle="tooltip">Update</a>
+                    </div>
+                    @endif
+
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-header">Download Item via :</div>
+
+                    <form action="{{ route('items.export', ['id' => $item['id'] ]) }}" method="get">
+                        @csrf
+                        <input type="hidden" value="excel" name="type">
+                        <button type="submit" class="dropdown-item">Excel File</button>
+                    </form>
+                    <form action="{{ route('items.export', ['id' => $item['id'] ]) }}" method="get">
+                        @csrf
+                        <input type="hidden" value="pdf" name="type">
+                        <button type="submit" class="dropdown-item">PDF File</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        @endif
-
+        <!-- Card Body -->
         <div class="card-body">
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Item ID</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['item_id'] }}</h6>
-                </div>
-            </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Item Name</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['item_name'] }}</h6>
-                </div>
-            </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Item Code</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['item_code'] }}</h6>
-                </div>
-            </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Category Name</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['name'] }}</h6>
-                </div>
-            </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Safety Stock</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['safety_stock'] }}</h6>
-                </div>
-            </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Received Date</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['received_date'] }}</h6>
-                </div>
-            </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Status</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">@if ($item['deleted_at'] == null)
-                        <!-- Button trigger InactiveModel  -->
-                        <button type="button" class="btn btn-success btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-target="#itemInactiveModel">
-                            <div data-toggle="tooltip" title="Tap to Inactive">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-check"></i>
-                                </span>
-                                <span class="text">
-                                    Active
-                                </span>
-                            </div>
+            <div class="row text-left">
+                <ul class="list-group list-group-flush col-5">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-6">Item ID</div>
+                            <div class="col-6">{{ $item['item_id'] }}</div>
+                        </div>
 
-                        </button>
-                        @else
-                        <!-- Button trigger ActiveModel    -->
-                        <button type="button" class="btn btn-secondary btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-toggle="tooltip" data-target="#itemActiveModel" title="Active">
-                            <div data-toggle="tooltip" title="Tap to Active">
-                                <span class="icon text-white-50">
-                                    <i class="fas fa-ban"></i>
-                                </span>
-                                <span class="text">
-                                    Inactive
-                                </span>
-                            </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-6">Name</div>
+                            <div class="col-6">{{ $item['item_name'] }}</div>
+                        </div>
 
-                        </button>
-                        @endif
-                    </h6>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-6">Item Code</div>
+                            <div class="col-6">{{ $item['item_code'] }}</div>
+                        </div>
+
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-6">Category</div>
+                            <div class="col-6">{{ $item['name'] }}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-6">Safety Stock</div>
+                            <div class="col-6">{{ $item['safety_stock'] }}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-6">Received date</div>
+                            <div class="col-6">{{ $item['received_date'] }}</div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-6">Status</div>
+                            <div class="col-6">
+                                @if ($item['deleted_at'] == null)
+                                <!-- Button trigger InactiveModel  -->
+                                <button type="button" class="btn btn-success btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-target="#itemInactiveModel">
+                                    <div data-toggle="tooltip" title="Tap to Inactive">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                        <span class="text">
+                                            Active
+                                        </span>
+                                    </div>
+
+                                </button>
+                                @else
+                                <!-- Button trigger ActiveModel    -->
+                                <button type="button" class="btn btn-secondary btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-toggle="tooltip" data-target="#itemActiveModel" title="Active">
+                                    <div data-toggle="tooltip" title="Tap to Active">
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-ban"></i>
+                                        </span>
+                                        <span class="text">
+                                            Inactive
+                                        </span>
+                                    </div>
+
+                                </button>
+                                @endif
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="col-7" style="max-height: 24rem;">
+                    <a href="#">
+                        <img class="card-img-top rounded" style="max-height: 24rem;" src="{{ $item['image'] ? asset($item['image']) : asset('placeholder-image/image-folder-animate.svg') }}" alt="Card image cap">
+                    </a>
                 </div>
             </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Description</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['description'] }}</h6>
-                </div>
-            </div>
-            <hr>
-            <div class="row mb-1">
-                <div class="col-6">
-                    <h5 class="text-dark">Item Name</h5>
-                </div>
-                <div class="col-6">
-                    <h6 class="card-title">{{ $item['item_name'] }}</h6>
-                </div>
-            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-3">Description</div>
+                        <div class="col-9">{{ $item['description'] }}</div>
+                    </div>
+
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -179,10 +199,6 @@ Back
             </div>
             <div class="modal-body">
                 <p>Item ID: <span id="inactiveModalItemId"></span></p>
-                <p>Item Code: <span id="inactiveModalItemCode"></span></p>
-                <p>Item Name: <span id="inactiveModalItemName"></span></p>
-                <p>Category Name: <span id="inactiveModalCategoryName"></span></p>
-                <p>Safety Stock: <span id="inactiveModalSafetyStock"></span></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -204,10 +220,6 @@ Back
             </div>
             <div class="modal-body">
                 <p>Item ID: <span id="activeModalItemId"></span></p>
-                <p>Item Code: <span id="activeModalItemCode"></span></p>
-                <p>Item Name: <span id="activeModalItemName"></span></p>
-                <p>Category Name: <span id="activeModalCategoryName"></span></p>
-                <p>Safety Stock: <span id="activeModalSafetyStock"></span></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -217,34 +229,6 @@ Back
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="itemDeleteModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header ">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Delete Item?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Item ID: <span id="deleteModalItemId"></span></p>
-                <p>Item Code: <span id="deleteModalItemCode"></span></p>
-                <p>Item Name: <span id="deleteModalItemName"></span></p>
-                <p>Category Name: <span id="deleteModalCategoryName"></span></p>
-                <p>Safety Stock: <span id="deleteModalSafetyStock"></span></p>
-            </div>
-            <div class="modal-footer bg-light shadow-sm">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form action="{{ route('items.delete') }}" method="POST">
-                    @csrf @method('DELETE')
-                    <input type="hidden" value="" name="txtId" id="deleteID">
-                    <button type="submit" class="btn btn-danger" id="modelDeleteChange">Delete</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -255,52 +239,17 @@ Back
         $('#itemInactiveModel').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var itemId = button.data('id'); // Extract item ID from data-id attribute
-            var itemCode = button.closest('tr').find('td:eq(0)').text(); // Get item code from table row
-            var itemName = button.closest('tr').find('td:eq(1)').text(); // Get item name from table row
-            var categoryName = button.closest('tr').find('td:eq(2)').text(); // Get category name from table row
-            var safetyStock = button.closest('tr').find('td:eq(3)').text(); // Get safety stock from table row
-
             // Set the values in the modal
             $('#inactiveModalItemId').text(itemId);
-            $('#inactiveModalItemCode').text(itemCode);
-            $('#inactiveModalItemName').text(itemName);
-            $('#inactiveModalCategoryName').text(categoryName);
-            $('#inactiveModalSafetyStock').text(safetyStock);
         });
 
         $('#itemActiveModel').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
             var itemId = button.data('id'); // Extract item ID from data-id attribute
-            console.log(itemId);
-            var itemCode = button.closest('tr').find('td:eq(0)').text(); // Get item code from table row
-            var itemName = button.closest('tr').find('td:eq(1)').text(); // Get item name from table row
-            var categoryName = button.closest('tr').find('td:eq(2)').text(); // Get category name from table row
-            var safetyStock = button.closest('tr').find('td:eq(3)').text(); // Get safety stock from table row
+
 
             // Set the values in the modal
             $('#activeModalItemId').text(itemId);
-            $('#activeModalItemCode').text(itemCode);
-            $('#activeModalItemName').text(itemName);
-            $('#activeModalCategoryName').text(categoryName);
-            $('#activeModalSafetyStock').text(safetyStock);
-        });
-
-        $('#itemDeleteModel').on('show.bs.modal', function(event) {
-            var button = $(event.relatedTarget); // Button that triggered the modal
-            var itemId = button.data('id'); // Extract item ID from data-id attribute
-            console.log(itemId);
-            var itemCode = button.closest('tr').find('td:eq(0)').text(); // Get item code from table row
-            var itemName = button.closest('tr').find('td:eq(1)').text(); // Get item name from table row
-            var categoryName = button.closest('tr').find('td:eq(2)').text(); // Get category name from table row
-            var safetyStock = button.closest('tr').find('td:eq(3)').text(); // Get safety stock from table row
-
-            // Set the values in the modal
-            $('#deleteModalItemId').text(itemId);
-            $('#deleteID').val(itemId);
-            $('#deleteModalItemCode').text(itemCode);
-            $('#deleteModalItemName').text(itemName);
-            $('#deleteModalCategoryName').text(categoryName);
-            $('#deleteModalSafetyStock').text(safetyStock);
         });
     });
 </script>

@@ -148,22 +148,25 @@ page-top
 <!-- Begin Page Content -->
 <div class="container-fluid">
     @if($errors->any())
-    <div class="card mb-4 py-3 border-bottom-danger" id="error-message">
-        <div class="card-body">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="card mb-4 py-3 border-bottom-danger alert alert-light alert-dismissible fade show" role="alert">
+        <strong class="text-danger">Error!</strong>
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     @endif
 
     @if (session('success'))
-    <div class="card mb-4 py-3 border-bottom-success" id="success-message">
-        <div class="card-body">
-            {{ session('success') }}
-        </div>
+    <div class="card mb-4 py-3 border-bottom-success alert alert-light alert-dismissible fade show" role="alert">
+        <strong class="text-success">Success!</strong> {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     @endif
 
@@ -174,7 +177,7 @@ page-top
             <h1 class="h4 text-gray-900 mb-4">Enter Items Details</h1>
 
         </div>
-        <form class="user" action="@yield('form-action')" method="post" enctype="multipart/form-data">
+        <form class="user form-floating" action="@yield('form-action')" method="post" enctype="multipart/form-data">
             @csrf @yield('form-method')
             <div class="file-upload mb-2">
                 <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
@@ -196,28 +199,46 @@ page-top
             </div>
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemID" class="form-control form-control-user" id="exampleFirstName" value="@yield('item-id')" readonly placeholder="Item ID">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-control-user" name="txtItemID" id="floatingInputGridId" value="@yield('item-id')" readonly placeholder="Item ID">
+                        <label for="floatingInputGridId">Item ID</label>
+                    </div>
                 </div>
                 <div class="col-sm-6">
-                    <input type="text" name="txtCode" class="form-control form-control-user" id="exampleLastName" @yield('code-value') value="{{ old('txtCode') }}" @yield('read-only') placeholder="Item Code">
+                    <div class="form-floating">
+                        <input type="text" class="form-control form-control-user" name="txtCode" id="floatingInputGridCode" @yield('code-value') value="{{ old('txtCode') }}" @yield('read-only') placeholder="Item Code">
+                        <label for="floatingInputGridCode">Item ID</label>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
-                <input type="text" name="txtName" class="form-control form-control-user" id="exampleInputEmail" @yield('name-value') value="{{ old('txtName') }}" @yield('read-only') placeholder="Item Name">
+                <div class="form-floating">
+                    <input type="text" class="form-control form-control-user" name="txtName" id="floatingInputGridName" @yield('name-value') value="{{ old('txtName') }}" @yield('read-only') placeholder="Item Name">
+                    <label for="floatingInputGridName">Item Name</label>
+                </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
-                    <input type="number" name="txtStock" class="form-control form-control-user" min="0" id="exampleInputPassword" @yield('stock-value') value="{{ old('txtStock') }}" @yield('read-only') placeholder="Safety Stock">
+                    <div class="form-floating">
+                        <input type="number" class="form-control form-control-user" name="txtStock" min="0" id="floatingInputGridStock" @yield('stock-value') value="{{ old('txtStock') }}" @yield('read-only') placeholder="Safety Stock">
+                        <label for="floatingInputGridStock">Safety Stock</label>
+                    </div>
                 </div>
-                <div class="col-sm-6">
-                    <input type="date" name="txtDate" class="form-control form-control-user" id="exampleRepeatPassword" @yield('date-value') value="{{ old('txtDate') }}" @yield('read-only') placeholder="Recieve Date">
+                <div class="col-sm-6 mb-3 mb-sm-0">
+                    <div class="form-floating">
+                        <input type="date" class="form-control form-control-user" name="txtDate" id="floatingInputGridDate" @yield('date-value') value="{{ old('txtDate') }}" @yield('read-only') placeholder="Recieve Date">
+                        <label for="floatingInputGridDate">Received Date</label>
+                    </div>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-10 mb-3 mb-sm-0">
-                    <select name="cbocategories" id="cbocategories" @yield('read-only') class="form-control form-control-user-1">
-                        @yield('categories')
-                    </select>
+                    <div class="form-floating">
+                        <select class="form-select form-control-user-1" name="cbocategories" id="cbocategories" @yield('read-only') aria-label="Floating label select example">
+                            @yield('categories')
+                        </select>
+                        <label for="cboCategories">Categories</label>
+                    </div>
                 </div>
                 <div class="col-sm-1">
                     <!-- <input type="text" class="form-control form-control-user" id="exampleRepeatPassword" disabled style="font-size:x-large;" placeholder="&#43;"> -->
@@ -235,7 +256,10 @@ page-top
                 </div>
             </div>
             <div class="form-group">
-                <textarea name="txtDescription" id="exampleInputEmail" class="form-control form-control-user" cols="30" rows="2" @yield('read-only') placeholder="Description">@yield('description-value'){{ old('txtDescription') }}</textarea>
+                <div class="form-floating">
+                    <textarea type="text" name="txtDescription" class="form-control form-control-user" id="floatingInputGridEmail" cols="30" rows="4" @yield('read-only') placeholder="Description">@yield('description-value'){{ old('txtDescription') }}</textarea>
+                    <label for="floatingInputGridEmail">Description</label>
+                </div>
             </div>
             <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSave" value="Save Item">
         </form>

@@ -77,7 +77,7 @@ class ItemController extends Controller
             // Handle POST request
             // Perform form processing, database operations, etc.
             $searchItems = $this->itemInterface->searchItems($request); // search items
-            $searchResult = $searchItems->paginate(2);
+            $searchResult = $searchItems->paginate(20);
             if (!$searchResult) {
                 return view('pages.index')->with(['items' => $searchResult])->with('categories', $categories);
             }
@@ -164,36 +164,66 @@ class ItemController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return Excel File.
      */
-    public function exportSearchItems(Request $request)
+    public function exportSearchItems(Request $request, $id = FALSE)
     {
         try {
-            $searchItems = $this->itemInterface->searchItems($request); // search items
-            $searchResult = $searchItems->get();
-            if (!$searchResult) {
-                return redirect()->back()->with(['items' => $searchResult]);
+
+            if ($id) { // if there is id
+                $exportItems = $this->itemInterface->getItemById($id);
+                
+                if (!$exportItems) { // if Errors
+                    return redirect()->back()->withErrors(['id' => $id ,'message' => $exportItems]);
+                }
+                Log::info($exportItems);
+                $filteredItems = collect([$exportItems])->map(function ($item) {
+                    $filteredItem = new stdClass();
+                    $filteredItem->item_id = $item->item_id;
+                    $filteredItem->item_code = $item->item_code;
+                    $filteredItem->item_name = $item->item_name;
+                    $filteredItem->name = $item->name;
+                    $filteredItem->safety_stock = $item->safety_stock;
+                    $filteredItem->received_date = $item->received_date;
+                    $filteredItem->description = $item->description;
+
+                    return $filteredItem;
+                });
+
+                if ($request->type  == 'excel') { // if the type is excel
+                    return Excel::download(new ItemsExport($filteredItems), 'items.xlsx');
+                } else if ($request->type == 'pdf') { // if the type is pdf
+                    $result = new PDFDownload($filteredItems);
+                    return $result->downloadItemsAsPDF();
+                }
+            }
+            else {
+                $searchItems = $this->itemInterface->searchItems($request); // search items
+                $searchResult = $searchItems->get();
+                if (!$searchResult) { // if Errors
+                    return redirect()->back()->with(['items' => $searchResult]);
+                }
+    
+                $filteredItems = $searchResult->map(function ($item) { 
+                    $filteredItem = new stdClass();
+                    $filteredItem->item_id = $item->item_id;
+                    $filteredItem->item_code = $item->item_code;
+                    $filteredItem->item_name = $item->item_name;
+                    $filteredItem->name = $item->name;
+                    $filteredItem->safety_stock = $item->safety_stock;
+                    $filteredItem->received_date = $item->received_date;
+                    $filteredItem->description = $item->description;
+    
+                    return $filteredItem;
+                });
+                
+                if ($request->type  == 'excel') { // if the type is excel
+                    return Excel::download(new ItemsExport($filteredItems), 'items.xlsx');
+                } else if ($request->type == 'pdf') { // if the type is pdf
+                    $result = new PDFDownload($filteredItems);
+                    return $result->downloadItemsAsPDF();
+                }
             }
 
-            $filteredItems = $searchResult->map(function ($item) {
-                $filteredItem = new stdClass();
-                $filteredItem->item_id = $item->item_id;
-                $filteredItem->item_code = $item->item_code;
-                $filteredItem->item_name = $item->item_name;
-                $filteredItem->name = $item->name;
-                $filteredItem->safety_stock = $item->safety_stock;
-                $filteredItem->received_date = $item->received_date;
-                $filteredItem->description = $item->description;
-
-                return $filteredItem;
-            });
-
-            if ($request->type  == 'excel') {
-                return Excel::download(new ItemsExport($filteredItems), 'items.xlsx');
-            } else if ($request->type == 'pdf') {
-                $result = new PDFDownload($filteredItems);
-                return $result->downloadItemsAsPDF();
-            }
-
-            return redirect()->back()->with('items', $searchResult)->with('search', true);
+            return redirect()->back()->with('items', $searchResult)->with('search', true)->with('id', $id);
         } catch (\Exception $e) {
             return redirect()->route('items.list')->withErrors(['message' => $e->getMessage()]);
         }
@@ -335,7 +365,7 @@ class ItemController extends Controller
     {
         //
         try {
-            $showItem = $this->itemInterface->getItemById($id);
+            $showItem = $this->itemInterface->getItemById($id)->toArray();
             $categories = $this->categoryInterface->getAllCategories();
 
 
@@ -458,7 +488,7 @@ class ItemController extends Controller
                 return redirect()->back()->withErrors(['message' => $isDeleted]);
             }
 
-            return redirect()->back()->with(['success' => 'Item deleted successfully']);
+            return redirect()->back()->with(['id' => $request->txtId, 'success' => 'Item deleted successfully']);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }

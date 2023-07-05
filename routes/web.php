@@ -37,6 +37,7 @@ Route::group(['prefix' => 'items'], function(){
     Route::get('/suggestions', 'ItemController@autoComplete')->name('items.suggestions');
 
     Route::group(['prefix' => '/{id}'], function(){
+        Route::get('/export', 'ItemController@exportSearchItems')->name('items.export');
         Route::get('/active', 'ItemController@itemActive')->name('items.active');
         Route::get('/inactive', 'ItemController@itemInactive')->name('items.inactive');
         Route::get('/detail', 'ItemController@show')->name('items.detail');

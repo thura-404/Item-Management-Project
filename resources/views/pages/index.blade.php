@@ -47,22 +47,25 @@ New Item
 <div class="container-fluid">
 
     @if($errors->any())
-    <div class="card mb-4 py-3 border-bottom-danger" id="error-message">
-        <div class="card-body">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
+    <div class="card mb-4 py-3 border-bottom-danger alert alert-light alert-dismissible fade show" role="alert">
+        <strong>Error!</strong>
+        <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     @endif
 
     @if (session('success'))
-    <div class="card mb-4 py-3 border-bottom-success" id="success-message">
-        <div class="card-body">
-            {{ session('success') }}
-        </div>
+    <div class="card mb-4 py-3 border-bottom-success alert alert-light alert-dismissible fade show" role="alert">
+        <strong>Success!</strong> {{ session('success') }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     @endif
 
