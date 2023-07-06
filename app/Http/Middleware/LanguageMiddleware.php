@@ -3,10 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
 
-class checkEmployeeLogin
+class LanguageMiddleware
 {
     /**
      * Handle an incoming request.
@@ -17,12 +17,12 @@ class checkEmployeeLogin
      */
     public function handle($request, Closure $next)
     {
-        $path = $request->path();
-
-        if ($path != 'employees/login-form' && !Session::get('employee')) {
-            return redirect('employees/login-form');
-        } 
-
+        if (!Session::get('locale') == null) {
+            App::setLocale(Session::get('locale'));
+        } else {
+            Session::put('locale', 'en');
+            App::setLocale('en');
+        }
         return $next($request);
     }
 }

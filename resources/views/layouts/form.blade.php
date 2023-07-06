@@ -416,6 +416,10 @@ page-top
 
                 // Add the new category options to the select box
                 $.each(response, function(index, category) {
+                    if (category.name == categoryName) {
+                        alert(categoryName);
+                        var option = $('<option>').text(category.name).val(category.id);
+                    }
                     var option = $('<option>').text(category.name).val(category.id);
                     $('#cbocategories').append(option);
                 });
@@ -428,7 +432,7 @@ page-top
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
 
-
+                alert('Category added successfully!');
             },
             error: function(xhr, status, error) {
 
@@ -440,21 +444,7 @@ page-top
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
 
-                // Show error message
-                if (xhr.status == 422) {
-                    var errors = xhr.responseJSON.errors;
-                    var errorHtml = '<ul>';
-                    $.each(errors, function(key, value) {
-                        errorHtml += '<li>' + value[0] + '</li>';
-                    });
-                    errorHtml += '</ul>';
-
-                    $('#error-message').show();
-                    $('#error-message .card-body').html(errorHtml);
-                    setTimeout(function() {
-                        $('#error-message').hide();
-                    }, 3000);
-                }
+                alert(error);
             }
         });
     });

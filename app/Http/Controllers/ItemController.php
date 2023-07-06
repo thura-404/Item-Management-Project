@@ -170,9 +170,9 @@ class ItemController extends Controller
 
             if ($id) { // if there is id
                 $exportItems = $this->itemInterface->getItemById($id);
-                
+
                 if (!$exportItems) { // if Errors
-                    return redirect()->back()->withErrors(['id' => $id ,'message' => $exportItems]);
+                    return redirect()->back()->withErrors(['id' => $id, 'message' => $exportItems]);
                 }
                 Log::info($exportItems);
                 $filteredItems = collect([$exportItems])->map(function ($item) {
@@ -194,15 +194,14 @@ class ItemController extends Controller
                     $result = new PDFDownload($filteredItems);
                     return $result->downloadItemsAsPDF();
                 }
-            }
-            else {
+            } else {
                 $searchItems = $this->itemInterface->searchItems($request); // search items
                 $searchResult = $searchItems->get();
                 if (!$searchResult) { // if Errors
                     return redirect()->back()->with(['items' => $searchResult]);
                 }
-    
-                $filteredItems = $searchResult->map(function ($item) { 
+
+                $filteredItems = $searchResult->map(function ($item) {
                     $filteredItem = new stdClass();
                     $filteredItem->item_id = $item->item_id;
                     $filteredItem->item_code = $item->item_code;
@@ -211,10 +210,10 @@ class ItemController extends Controller
                     $filteredItem->safety_stock = $item->safety_stock;
                     $filteredItem->received_date = $item->received_date;
                     $filteredItem->description = $item->description;
-    
+
                     return $filteredItem;
                 });
-                
+
                 if ($request->type  == 'excel') { // if the type is excel
                     return Excel::download(new ItemsExport($filteredItems), 'items.xlsx');
                 } else if ($request->type == 'pdf') { // if the type is pdf
@@ -260,9 +259,7 @@ class ItemController extends Controller
     public function autoComplete(Request $request)
     {
         try {
-            Log::info($request);
             $suggestItems = $this->itemInterface->autoCompleteItems($request);
-            Log::info($suggestItems);
             return response()->json($suggestItems);
         } catch (\Exception $e) {
             return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);
@@ -280,8 +277,12 @@ class ItemController extends Controller
     public function itemActive($id)
     {
         try {
-            Log::info($id);
             $isInactive = new ActiveItem($id);
+
+            $isDeleted = $this->itemInterface->getItemById($id);
+            if ($isDeleted == null) {
+                return redirect()->route('items.list')->withErrors(['message' => 'Seems like the Item no longer Exists. Please try again']);
+            }
             $isInactive->executeProcess();
 
             if (!$isInactive) {
@@ -304,8 +305,12 @@ class ItemController extends Controller
     public function itemInactive($id)
     {
         try {
-            Log::info($id);
             $isActive = new InactiveItem($id);
+
+            $isDeleted = $this->itemInterface->getItemById($id);
+            if ($isDeleted == null) {
+                return redirect()->route('items.list')->withErrors(['message' => 'Seems like the Item no longer Exists. Please try again']);
+            }
             $isActive->executeProcess();
 
             if (!$isActive) {
@@ -365,7 +370,7 @@ class ItemController extends Controller
     {
         //
         try {
-            $showItem = $this->itemInterface->getItemById($id)->toArray();
+            $showItem = $this->itemInterface->getItemById($id);
             $categories = $this->categoryInterface->getAllCategories();
 
 
@@ -374,9 +379,9 @@ class ItemController extends Controller
             }
 
             if (request()->route()->getName() === 'items.detail') { // If the page is detail page
-                return view('pages.detail')->with(['item' => $showItem]);
+                return view('pages.detail')->with(['item' => $showItem->toArray()]);
             } elseif (request()->route()->getName() === 'items.update') { // If the page is update page
-                return view('pages.update')->with(['item' => $showItem])->with(['categories' => $categories]);
+                return view('pages.update')->with(['item' => $showItem->toArray()])->with(['categories' => $categories]);
             }
 
             return redirect()->route('items.list');
@@ -408,6 +413,10 @@ class ItemController extends Controller
         try {
             $updateItem = new UpdateItem($request, $id);
 
+            $isDeleted = $this->itemInterface->getItemById($id);
+            if ($isDeleted == null) {
+                return redirect()->route('items.list')->withErrors(['message' => 'Seems like the Item no longer Exists. Please try again']);
+            }
             $result = $updateItem->executeProcess();
             if (!$result) { // If error 
                 return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => $result]);
@@ -415,24 +424,24 @@ class ItemController extends Controller
             if ($request->hasFile('filImage')) { // File field is not empty
 
                 $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($id);
+                
+                if (!count($isItemUploadExists) > 0) { // If image isn't already exists
+                    $newItemsUpload = new SaveItemUpload($request, $result['primary_key']);
 
-                if (count($isItemUploadExists) > 0) { // If image already exists
+                    $uploadResult = $newItemsUpload->executeProcess();
 
-                    $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
-
-                    $uploadResult = $updateItemsUpload->executeProcess();
-
-                    if (!$uploadResult) { // If image not updated
-                        return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => 'Error updating Item Image']);
+                    if (!$uploadResult) { // If image not saved
+                        return redirect()->route('items.register-form')->withErrors(['message' => 'Error saving Image']);
                     }
                 }
 
-                $newItemsUpload = new SaveItemUpload($request, $result['primary_key']);
 
-                $uploadResult = $newItemsUpload->executeProcess();
+                $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
 
-                if (!$uploadResult) { // If image not saved
-                    return redirect()->route('items.register-form')->withErrors(['message' => 'Error saving Image']);
+                $uploadResult = $updateItemsUpload->executeProcess();
+
+                if (!$uploadResult) { // If image not updated
+                    return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => 'Error updating Item Image']);
                 }
             } elseif ($request->remove_image) { // If remove image button is clicked on view
                 $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($id);

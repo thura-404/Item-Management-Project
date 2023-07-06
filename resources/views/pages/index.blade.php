@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-Items
+@lang('public.item')
 @endsection
 
 @section('cs-style')
@@ -20,12 +20,12 @@ page-top
 @endsection
 
 @section('nav-title')
-List
+@lang('public.list')
 @endsection
 
 @section('download')
 <a class="nav-link dropdown-toggle  text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Download All Items
+    @lang('public.downloadAllItem')
 </a>
 <div class="dropdown-menu dropdown-menu-right animated--grow-in" aria-labelledby="navbarDropdown">
     <a class="dropdown-item" href="{{ route('items.export-all', ['type' => 'excel']) }}">Dowanload Excel</a>
@@ -39,7 +39,7 @@ List
 @endsection
 
 @section('nav-item-text')
-New Item
+@lang('public.addNewItem')
 @endsection
 
 @section('body-container')
@@ -48,7 +48,7 @@ New Item
 
     @if($errors->any())
     <div class="card mb-4 py-3 border-bottom-danger alert alert-light alert-dismissible fade show" role="alert">
-        <strong>Error!</strong>
+        <strong>@lang('public.error')!</strong>
         <ul>
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -62,7 +62,7 @@ New Item
 
     @if (session('success'))
     <div class="card mb-4 py-3 border-bottom-success alert alert-light alert-dismissible fade show" role="alert">
-        <strong>Success!</strong> {{ session('success') }}
+        <strong>@lang('public.success')!</strong> {{ session('success') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -71,31 +71,43 @@ New Item
 
     <div class="p-1 mb-2">
         <div class="text-center">
-            <h1 class="h4 text-gray-900 mb-4">Search Items</h1>
+            <h1 class="h4 text-gray-900 mb-4">@lang('public.searchItem')</h1>
         </div>
         <form class="user" action="{{ route('items.search') }}" method="get" enctype="multipart/form-data">
             @csrf
 
             <div class="form-group row">
                 <div class="col-sm-2 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemId" class="form-control form-control-user" id="item_id" placeholder="Item ID" value="{{ $formData['txtItemId'] ?? '' }}">
+                    <div class="form-floating">
+                        <input type="text" name="txtItemId" class="form-control form-control-user" id="item_id" placeholder="Item ID" value="{{ $formData['txtItemId'] ?? '' }}">
+                        <label for="item_id">@lang('public.itemId')</label>
+                    </div>
                 </div>
                 <div class="col-sm-2">
-                    <input type="text" name="txtCode" class="form-control form-control-user" id="item_code" value="{{ $formData['txtCode'] ?? '' }}" placeholder="Item Code">
+                    <div class="form-floating">
+                        <input type="text" name="txtCode" class="form-control form-control-user" id="item_code" value="{{ $formData['txtCode'] ?? '' }}" placeholder="Item Code">
+                        <label for="item_code">@lang('public.itemCode')</label>
+                    </div>
                 </div>
                 <div class="col-sm-3 mb-3 mb-sm-0">
-                    <input type="text" name="txtItemName" class="form-control form-control-user" id="item_name" value="{{ $formData['txtItemName'] ?? '' }}" placeholder="Item Name">
+                    <div class="form-floating">
+                        <input type="text" name="txtItemName" class="form-control form-control-user" id="item_name" value="{{ $formData['txtItemName'] ?? '' }}" placeholder="Item Name">
+                        <label for="item_name">@lang('public.itemName')</label>
+                    </div>
                 </div>
                 <div class="col-sm-3">
-                    <select name="cboCategories" id="cboCategories" class="form-control form-control-user-1">
-                        <option value="" disabled selected hidden>Choose</option>
-                        @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" {{ isset($formData['cboCategories']) && $formData['cboCategories'] == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endforeach
-                    </select>
+                    <div class="form-floating">
+                        <select name="cboCategories" id="cboCategories" class="form-control form-control-user-1">
+                            <option value="" disabled selected hidden>@lang('public.choose')</option>
+                            @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" {{ isset($formData['cboCategories']) && $formData['cboCategories'] == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                        <label for="cboCategories">@lang('public.category')</label>
+                    </div>
                 </div>
                 <div class="col-sm-2">
-                    <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSearch" value="Search">
+                    <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSearch" value="@lang('public.search')">
                 </div>
             </div>
         </form>
@@ -108,19 +120,19 @@ New Item
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Items</h6>
+            <h6 class="m-0 font-weight-bold text-primary">@lang('public.item')</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead class="thead-dark">
                         <tr>
-                            <th>Item Code</th>
-                            <th>Item Name</th>
-                            <th>Category Name</th>
-                            <th>Safety Stock</th>
-                            <th>Status</th>
-                            <th>Actions</th>
+                            <th>@lang('public.itemCode')</th>
+                            <th>@lang('public.itemName')</th>
+                            <th>@lang('public.category')</th>
+                            <th>@lang('public.safetyStock')</th>
+                            <th>@lang('public.status')</th>
+                            <th>@lang('public.actions')</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -135,12 +147,12 @@ New Item
                                 @if ($item['deleted_at'] == null)
                                 <!-- Button trigger InactiveModel  -->
                                 <button type="button" class="btn btn-success btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-target="#itemInactiveModel">
-                                    <div data-toggle="tooltip" title="Tap to Inactive">
+                                    <div data-toggle="tooltip" title="@lang('public.tapToInactive')">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-check"></i>
                                         </span>
                                         <span class="text">
-                                            Active
+                                            @lang('public.active')
                                         </span>
                                     </div>
 
@@ -148,12 +160,12 @@ New Item
                                 @else
                                 <!-- Button trigger ActiveModel    -->
                                 <button type="button" class="btn btn-secondary btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-toggle="tooltip" data-target="#itemActiveModel" title="Active">
-                                    <div data-toggle="tooltip" title="Tap to Active">
+                                    <div data-toggle="tooltip" title="@lang('public.tapToActive')">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-ban"></i>
                                         </span>
                                         <span class="text">
-                                            Inactive
+                                            @lang('public.inactive')
                                         </span>
                                     </div>
 
@@ -163,29 +175,29 @@ New Item
 
                             </td>
                             <td>
-                                <a href="{{ route('items.detail', ['id' => $item['id']]) }}" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Details">
+                                <a href="{{ route('items.detail', ['id' => $item['id']]) }}" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="@lang('public.detail')">
                                     <span class="text">
                                         <i class="fas fa-info-circle"></i>
                                     </span>
                                 </a>
                                 @if ($item['deleted_at'] == null)
-                                <a href="{{ route('items.update', ['id' => $item['id']]) }}" class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Update">
+                                <a href="{{ route('items.update', ['id' => $item['id']]) }}" class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="@lang('public.update')">
                                     <span class="text">
                                         <i class="fas fa-wrench"></i>
                                     </span>
                                 </a>
                                 <button class="btn btn-danger btn-icon-split tooltip-test" data-toggle="modal" data-target="#itemDeleteModel" data-id="{{ $item['id'] }}">
-                                    <span class="text" data-toggle="tooltip" title="Delete" data-placement="top">
+                                    <span class="text" data-toggle="tooltip" title="@lang('public.delete')" data-placement="top">
                                         <i class="fas fa-trash"></i>
                                     </span>
                                 </button>
                                 @else
-                                <button class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Feature Disabled for Inactive items!">
+                                <button class="btn btn-warning btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="@lang('public.featureDisable')!">
                                     <span class="icon text-white-50">
                                         <i class="fas fa-wrench"></i>
                                     </span>
                                 </button>
-                                <button class="btn btn-danger btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="Feature Disabled for Inactive items!">
+                                <button class="btn btn-danger btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="@lang('public.featureDisable')!">
                                     <span class="icon text-white-50">
                                         <i class="fas fa-trash"></i>
                                     </span>
@@ -204,7 +216,7 @@ New Item
                                 <div class="w-100 d-flex justify-content-end">
                                     <div class="dropdown no-arrow mb-4">
                                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Download Search Result
+                                            @lang('public.downloadSearch')
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                             <form action="{{ route('items.search-export') }}" method="get">
@@ -239,7 +251,7 @@ New Item
                 </table>
                 @else
                 <tr>
-                    <td colspan="4">No data available</td>
+                    <td colspan="4">@lang('public.noData')</td>
                 </tr>
                 </tbody>
                 </table>

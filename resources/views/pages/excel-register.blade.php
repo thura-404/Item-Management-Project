@@ -149,7 +149,7 @@ Register Manually
         <strong class="text-danger">Error!</strong>
         <ul>
             @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
+            <li>{!! $error !!}</li>
             @endforeach
         </ul>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\checkEmployeeLoginRequest;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Interfaces\EmployeeInterface;
+use Illuminate\Support\Facades\Session;
+use App\Http\Requests\checkEmployeeLoginRequest;
 
 /**
  * Class EmployeeController
@@ -47,24 +48,38 @@ class EmployeeController extends Controller
     {
         //
         try {
-            // $isExists = $this->employeeInterface->checkEmployeeLogin($request->txtId, $request->txtPassword);
-
-            // if ($isExists) {
-            //     return redirect()->route('items.list')->with('success', 'Login Successfully');
-            // }
-            // else{
-            //     return redirect()->route('employees.login-form')->withErrors(['message' => 'Email or Password is incorrect']);
-            // }
-
             $result = $this->employeeInterface->checkEmployeeLogin($request->txtId, $request->txtPassword);
 
             if ($result === true) {
+                // Store the employee session
+                Session::put('employee', $request->txtId);
+
                 return redirect()->route('items.list')->with('success', 'Login Successfully');
             } elseif ($result === 'password') {
                 return redirect()->route('employees.login-form')->withErrors(['message' => 'Incorrect password']);
             } elseif ($result === 'emp_id') {
                 return redirect()->route('employees.login-form')->withErrors(['message' => 'Employee ID not found']);
             }
+        } catch (\Exception $e) {
+            return redirect()->route('employees.login-form')->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Employee Logout.
+     *
+     * @author Thura Win
+     * @create 06/07/2023
+     * @return \Illuminate\Http\Response
+     */
+    public function logout()
+    {
+        //
+        try {
+            // Clear the employee session
+            Session::forget('employee');
+
+            return redirect()->route('employees.login-form')->with('success', 'Logged out successfully');
         } catch (\Exception $e) {
             return redirect()->route('employees.login-form')->withErrors(['message' => $e->getMessage()]);
         }

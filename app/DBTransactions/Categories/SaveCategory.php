@@ -38,7 +38,7 @@ class SaveCategory extends DBTransaction
             $newCategory->name = $this->request['name'];
             $newCategory->save();
 
-            if (!$newCategory) {
+            if (!$newCategory) { 
                 return ['status' => false, 'error' => 'Failed to save category.'];
             }
             return ['status' => true, 'categoryId' => $newCategory->id];
