@@ -52,17 +52,17 @@ class ItemRegisterRequest extends FormRequest
     {
 
         return [
-            'txtItemID.required' => 'Item ID is Required',
-            'txtCode.required' => 'Code is Required',
-            'txtName.required' => 'Name is Required',
-            'txtStock.required' => 'Stock is Required',
-            'txtStock.numeric' => 'Stock must be a number',
-            'txtDate.required' => 'Date is Required',
-            'txtDate.date' => 'Date is Invalid',
-            'cbocategories.required' => 'Category is Required',
-            'cbocategories.exists' => 'Category is Invalid',
-            'filImage.mimes' => 'Image must be an image',
-            'filImage.max' => 'Image must be less than 2MB'
+            'txtItemID.required' => __('public.itemIdRequired'),
+            'txtCode.required' => __('public.itemCodeRequired'),
+            'txtName.required' => __('public.itemNameRequired'),
+            'txtStock.required' => __('public.stockRequired'),
+            'txtStock.numeric' => __('public.stockMustBeNumber'),
+            'txtDate.required' => __('public.dateIsRequired'),
+            'txtDate.date' => __('public.dateIsInvalid'),
+            'cbocategories.required' => __('public.categoryRequired'),
+            'cbocategories.exists' => __('public.categoryInvalid'),
+            'filImage.mimes' => __('public.imageMustBeImage'),
+            'filImage.max' => __('public.imageMustBe2MB')
         ];
     }
 }

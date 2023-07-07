@@ -1,7 +1,7 @@
 @extends('layouts.form')
 
 @section('form-nav-title')
-Item Register
+@lang('public.itemRegister')
 @endsection
 
 
@@ -15,16 +15,16 @@ Item Register
 
 
 @section('form-nav-item-text')
-Add Excel File
+@lang('public.addExcel')
 @endsection
 
 @section('form-switch')
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
     <a href="{{ route('items.register-form') }}" class="btn btn-secondary active">
-        <input type="radio" name="options" id="option1" autocomplete="off" checked> Register Manually
+        <input type="radio" name="options" id="option1" autocomplete="off" checked> @lang('public.registerManually')
     </a>
     <a href="{{ route('items.excel-form') }}" class="btn btn-secondary">
-        <input type="radio" name="options" id="option2" autocomplete="off"> Add Excel File
+        <input type="radio" name="options" id="option2" autocomplete="off"> @lang('public.addExcel')
     </a>
 </div>
 @endsection
@@ -34,7 +34,7 @@ Add Excel File
 @endsection
 
 @section('categories')
-<option disabled selected hidden value="">Select Category</option>
+<option disabled selected hidden value="">@lang('public.choose')</option>
 @foreach ($categories as $category)
 <option value="{{ $category->id }}" {{ old('cboCategories') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
 @endforeach

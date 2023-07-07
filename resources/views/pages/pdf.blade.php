@@ -14,7 +14,11 @@
 
         th, td {
             border: 1px solid #000;
-            padding: 8px;
+            padding: 3px;
+        }
+
+        td {
+            width: 1.5rem;
         }
 
         th {
@@ -45,7 +49,7 @@
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->safety_stock }}</td>
                 <td>{{ $item->received_date }}</td>
-                <td>{{ $item->description }}</td>
+                <td style="max-width: 5rem;">{{ $item->description }}</td>
             </tr>
             @endforeach
         </tbody>

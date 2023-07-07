@@ -55,7 +55,7 @@ Back
                 <span class="icon text-white-50">
                     <i class="fas fa-arrow-left"></i>
                 </span>
-                <span class="text">Item List</span>
+                <span class="text">@lang('public.itemList')</span>
             </a>
             <div class="dropdown no-arrow">
                 <a class="dropdown-toggle text-dark" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -64,10 +64,10 @@ Back
                 <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink" style="">
                     <div class="dropdown-header">Actions :</div>
                     @if ($item['deleted_at'] == null)
-                    <a class="dropdown-item" href="{{ route('items.update', ['id' => $item['id']] ) }}">Update</a>
+                    <a class="dropdown-item" href="{{ route('items.update', ['id' => $item['id']] ) }}">@lang('public.update')</a>
                     @else
                     <div data-toggle="tooltip" title="Feature Disabled for Inactive Items!">
-                        <a class="dropdown-item disabled" disabled href="#" data-toggle="tooltip">Update</a>
+                        <a class="dropdown-item disabled" disabled href="#" data-toggle="tooltip">@lang('public.update')</a>
                     </div>
                     @endif
 
@@ -93,56 +93,56 @@ Back
                 <ul class="list-group list-group-flush col-5">
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-6">Item ID</div>
+                            <div class="col-6">@lang('public.itemId')</div>
                             <div class="col-6">{{ $item['item_id'] }}</div>
                         </div>
 
                     </li>
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-6">Name</div>
+                            <div class="col-6">@lang('public.itemName')</div>
                             <div class="col-6">{{ $item['item_name'] }}</div>
                         </div>
 
                     </li>
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-6">Item Code</div>
+                            <div class="col-6">@lang('public.itemCode')</div>
                             <div class="col-6">{{ $item['item_code'] }}</div>
                         </div>
 
                     </li>
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-6">Category</div>
+                            <div class="col-6">@lang('public.category')</div>
                             <div class="col-6">{{ $item['name'] }}</div>
                         </div>
                     </li>
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-6">Safety Stock</div>
+                            <div class="col-6">@lang('public.safetyStock')</div>
                             <div class="col-6">{{ $item['safety_stock'] }}</div>
                         </div>
                     </li>
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-6">Received date</div>
+                            <div class="col-6">@lang('public.receivedDate')</div>
                             <div class="col-6">{{ $item['received_date'] }}</div>
                         </div>
                     </li>
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-6">Status</div>
+                            <div class="col-6">@lang('public.status')</div>
                             <div class="col-6">
                                 @if ($item['deleted_at'] == null)
                                 <!-- Button trigger InactiveModel  -->
                                 <button type="button" class="btn btn-success btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-target="#itemInactiveModel">
-                                    <div data-toggle="tooltip" title="Tap to Inactive">
+                                    <div data-toggle="tooltip" title="@lang('public.tapToInactive')">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-check"></i>
                                         </span>
                                         <span class="text">
-                                            Active
+                                            @lang('public.active')
                                         </span>
                                     </div>
 
@@ -150,12 +150,12 @@ Back
                                 @else
                                 <!-- Button trigger ActiveModel    -->
                                 <button type="button" class="btn btn-secondary btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-toggle="tooltip" data-target="#itemActiveModel" title="Active">
-                                    <div data-toggle="tooltip" title="Tap to Active">
+                                    <div data-toggle="tooltip" title="@lang('public.tapToActive')">
                                         <span class="icon text-white-50">
                                             <i class="fas fa-ban"></i>
                                         </span>
                                         <span class="text">
-                                            Inactive
+                                            @lang('public.inactive')
                                         </span>
                                     </div>
 
@@ -174,7 +174,7 @@ Back
             <ul class="list-group list-group-flush">
                 <li class="list-group-item">
                     <div class="row">
-                        <div class="col-3">Description</div>
+                        <div class="col-3">@lang('public.description')</div>
                         <div class="col-9">{{ $item['description'] }}</div>
                     </div>
 

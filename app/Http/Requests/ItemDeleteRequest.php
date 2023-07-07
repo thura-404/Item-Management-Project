@@ -45,9 +45,9 @@ class ItemDeleteRequest extends FormRequest
     public function messages()
     {
         return [
-            'txtId.required' => 'Id is missing',
-            'txtId.numeric' => 'Id must be numeric',
-            'txtId.exists' => 'Item not found',
+            'txtId.required' => __('public.itemIdNotFound'),
+            'txtId.numeric' => __('public.itemIdMustBeNumber'),
+            'txtId.exists' => __('public.itemIdLost'),
         ];
     }
 }

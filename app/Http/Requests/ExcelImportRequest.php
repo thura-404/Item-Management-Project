@@ -45,8 +45,8 @@ class ExcelImportRequest extends FormRequest
     public function messages()
     {
         return [
-            'filExcel.required' => 'Please select file to upload.',
-            'filExcel.mimes' => 'Only Excel files are allowed.'
+            'filExcel.required' => __('public.selectFileToUpload'),
+            'filExcel.mimes' => __('public.onlyExcelFileAllow')
         ];
     }
 }

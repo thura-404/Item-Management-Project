@@ -242,7 +242,7 @@ class ItemController extends Controller
             $file = $request->file('filExcel');
             Excel::import(new ItemRegisterExcelImport($this->itemInterface, $this->categoryInterface), $file);
 
-            return redirect()->route('items.excel-form')->with(['success' => 'Items saved successfully']);
+            return redirect()->route('items.excel-form')->with(['success' => __('public.itemSaveSuccessfully')]);
         } catch (\Exception $e) {
             return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);
         }
@@ -277,18 +277,20 @@ class ItemController extends Controller
     public function itemActive($id)
     {
         try {
-            $isInactive = new ActiveItem($id);
-
             $isDeleted = $this->itemInterface->getItemById($id);
             if ($isDeleted == null) {
-                return redirect()->route('items.list')->withErrors(['message' => 'Seems like the Item no longer Exists. Please try again']);
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+            } elseif ($isDeleted->deleted_at == null) {
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemAlreadyActive')]);
             }
+
+            $isInactive = new ActiveItem($id);
             $isInactive->executeProcess();
 
             if (!$isInactive) {
                 return response()->back()->withErrors(['message' => $isInactive]);
             }
-            return redirect()->back()->with(['success' => 'Items Activated!']);
+            return redirect()->back()->with(['success' => __('public.itemActivated')]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }
@@ -305,18 +307,22 @@ class ItemController extends Controller
     public function itemInactive($id)
     {
         try {
-            $isActive = new InactiveItem($id);
 
             $isDeleted = $this->itemInterface->getItemById($id);
             if ($isDeleted == null) {
-                return redirect()->route('items.list')->withErrors(['message' => 'Seems like the Item no longer Exists. Please try again']);
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+            } elseif ($isDeleted->deleted_at != null) {
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemAlreadyInactive')]);
             }
+            $isActive = new InactiveItem($id);
+
+            $isDeleted = $this->itemInterface->getItemById($id);
             $isActive->executeProcess();
 
             if (!$isActive) {
                 return response()->back()->withErrors(['message' => $isActive]);
             }
-            return redirect()->back()->with(['success' => 'Items Inactivated!']);
+            return redirect()->back()->with(['success' => __('public.itemInactivated')]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }
@@ -334,7 +340,8 @@ class ItemController extends Controller
     {
         //
         try {
-            $newItem = new SaveItem($request);
+            $item_id = $this->itemInterface->getMaxItemId();
+            $newItem = new SaveItem($request, $item_id);
 
             $result = $newItem->executeProcess();
             if (!$result) {
@@ -349,12 +356,12 @@ class ItemController extends Controller
                 $uploadResult = $newItemsUpload->executeProcess();
 
                 if (!$uploadResult) {
-                    return redirect()->route('items.register-form')->withErrors(['message' => 'Error saving Item Image']);
+                    return redirect()->route('items.register-form')->withErrors(['message' => __('public.errorSavingItemImage')]);
                 }
             }
 
 
-            return redirect()->route('items.register-form')->with(['success' => 'Item created successfully']);
+            return redirect()->route('items.register-form')->with(['success' => __('public.itemCreated')]);
         } catch (\Exception $e) {
             return redirect()->route('items.register-form')->withErrors(['message' => $e->getMessage()]);
         }
@@ -375,7 +382,9 @@ class ItemController extends Controller
 
 
             if (!$showItem) { // If item not found
-                return redirect()->route('items.register-form')->withErrors(['message' => $showItem]);
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+            } elseif ($showItem->deleted_at != null && request()->route()->getName() != 'items.detail') { // If item is inactive and the page is not detail page
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemInactiveTryAgain')]);
             }
 
             if (request()->route()->getName() === 'items.detail') { // If the page is detail page
@@ -411,12 +420,15 @@ class ItemController extends Controller
     {
         //
         try {
+            $isDeleted = $this->itemInterface->getItemById($id);
+            if ($isDeleted == null) { // If item not found
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+            } elseif ($isDeleted->deleted_at != null) {
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemInactiveTryAgain')]);
+            }
+
             $updateItem = new UpdateItem($request, $id);
 
-            $isDeleted = $this->itemInterface->getItemById($id);
-            if ($isDeleted == null) {
-                return redirect()->route('items.list')->withErrors(['message' => 'Seems like the Item no longer Exists. Please try again']);
-            }
             $result = $updateItem->executeProcess();
             if (!$result) { // If error 
                 return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => $result]);
@@ -424,24 +436,24 @@ class ItemController extends Controller
             if ($request->hasFile('filImage')) { // File field is not empty
 
                 $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($id);
-                
+
                 if (!count($isItemUploadExists) > 0) { // If image isn't already exists
                     $newItemsUpload = new SaveItemUpload($request, $result['primary_key']);
 
                     $uploadResult = $newItemsUpload->executeProcess();
 
                     if (!$uploadResult) { // If image not saved
-                        return redirect()->route('items.register-form')->withErrors(['message' => 'Error saving Image']);
+                        return redirect()->route('items.register-form')->withErrors(['message' => __('public.errorSavingItemImage')]);
                     }
-                }
+                } else { // If image already exists
+                    $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
 
+                    $uploadResult = $updateItemsUpload->executeProcess();
+                    if (!$uploadResult) { // If image not updated
+                        return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => __('public.errorSavingItemImage')]);
+                    }
 
-                $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
-
-                $uploadResult = $updateItemsUpload->executeProcess();
-
-                if (!$uploadResult) { // If image not updated
-                    return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => 'Error updating Item Image']);
+                    unlink($isItemUploadExists[0]->file_path); // Remove old image
                 }
             } elseif ($request->remove_image) { // If remove image button is clicked on view
                 $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($id);
@@ -459,7 +471,7 @@ class ItemController extends Controller
             }
 
 
-            return redirect()->route('items.update', ['id' => $id])->with(['success' => 'Item updated successfully']);
+            return redirect()->route('items.update', ['id' => $id])->with(['success' => __('public.itemUpdatedSuccessfully')]);
         } catch (\Exception $e) { // If error 
             return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => $e->getMessage()]);
         }
@@ -477,6 +489,11 @@ class ItemController extends Controller
     {
         //
         try {
+            $isItemActive = $this->itemInterface->getItemById($request->txtId);
+            if ($isItemActive->deleted_at != null) {
+                return redirect()->route('items.list')->withErrors(['message' => __('public.itemInactiveTryAgain')]);
+            }
+
             $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($request->txtId);
 
             if (count($isItemUploadExists) > 0) {
@@ -497,7 +514,7 @@ class ItemController extends Controller
                 return redirect()->back()->withErrors(['message' => $isDeleted]);
             }
 
-            return redirect()->back()->with(['id' => $request->txtId, 'success' => 'Item deleted successfully']);
+            return redirect()->back()->with(['id' => $request->txtId, 'success' => __('public.itemDeletedSuccessfully')]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }

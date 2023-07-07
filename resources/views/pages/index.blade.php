@@ -275,21 +275,21 @@ page-top
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Inactive Item?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">@lang('public.sureInactive')?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Item ID: <span id="inactiveModalItemId"></span></p>
-                <p>Item Code: <span id="inactiveModalItemCode"></span></p>
-                <p>Item Name: <span id="inactiveModalItemName"></span></p>
-                <p>Category Name: <span id="inactiveModalCategoryName"></span></p>
-                <p>Safety Stock: <span id="inactiveModalSafetyStock"></span></p>
+                <p>@lang('public.itemId'): <span id="inactiveModalItemId"></span></p>
+                <p>@lang('public.itemCode'): <span id="inactiveModalItemCode"></span></p>
+                <p>@lang('public.itemName'): <span id="inactiveModalItemName"></span></p>
+                <p>@lang('public.category'): <span id="inactiveModalCategoryName"></span></p>
+                <p>@lang('public.safetyStock'): <span id="inactiveModalSafetyStock"></span></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="modelInactiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.inactive', ['id' => ':itemId']) }}'.replace(':itemId', $('#inactiveModalItemId').text())">Inactive</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('public.close')</button>
+                <button type="button" class="btn btn-primary" id="modelInactiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.inactive', ['id' => ':itemId']) }}'.replace(':itemId', $('#inactiveModalItemId').text())">@lang('public.tapToInactive')</button>
             </div>
         </div>
     </div>
@@ -300,21 +300,21 @@ page-top
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Active Item?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">@lang('public.sureActive')?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Item ID: <span id="activeModalItemId"></span></p>
-                <p>Item Code: <span id="activeModalItemCode"></span></p>
-                <p>Item Name: <span id="activeModalItemName"></span></p>
-                <p>Category Name: <span id="activeModalCategoryName"></span></p>
-                <p>Safety Stock: <span id="activeModalSafetyStock"></span></p>
+                <p>@lang('public.itemId'): <span id="activeModalItemId"></span></p>
+                <p>@lang('public.itemCode'): <span id="activeModalItemCode"></span></p>
+                <p>@lang('public.itemName'): <span id="activeModalItemName"></span></p>
+                <p>@lang('public.category'): <span id="activeModalCategoryName"></span></p>
+                <p>@lang('public.safetyStock'): <span id="activeModalSafetyStock"></span></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="modelActiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.active', ['id' => ':itemId']) }}'.replace(':itemId', $('#activeModalItemId').text())">Active</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('public.close')</button>
+                <button type="button" class="btn btn-primary" id="modelActiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.active', ['id' => ':itemId']) }}'.replace(':itemId', $('#activeModalItemId').text())">@lang('public.tapToActive')</button>
             </div>
         </div>
     </div>
@@ -325,36 +325,29 @@ page-top
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header ">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Delete Item?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">@lang('public.sureDelete')?</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Item ID: <span id="deleteModalItemId"></span></p>
-                <p>Item Code: <span id="deleteModalItemCode"></span></p>
-                <p>Item Name: <span id="deleteModalItemName"></span></p>
-                <p>Category Name: <span id="deleteModalCategoryName"></span></p>
-                <p>Safety Stock: <span id="deleteModalSafetyStock"></span></p>
+                <p>@lang('public.itemId'): <span id="deleteModalItemId"></span></p>
+                <p>@lang('public.itemCode'): <span id="deleteModalItemCode"></span></p>
+                <p>@lang('public.itemName'): <span id="deleteModalItemName"></span></p>
+                <p>@lang('public.category'): <span id="deleteModalCategoryName"></span></p>
+                <p>@lang('public.safetyStock'): <span id="deleteModalSafetyStock"></span></p>
             </div>
             <div class="modal-footer bg-light shadow-sm">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('public.close')</button>
                 <form action="{{ route('items.delete') }}" method="POST">
                     @csrf @method('DELETE')
                     <input type="hidden" value="" name="txtId" id="deleteID">
-                    <button type="submit" class="btn btn-danger" id="modelDeleteChange">Delete</button>
+                    <button type="submit" class="btn btn-danger" id="modelDeleteChange">@lang('public.delete')</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
-
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
-
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 

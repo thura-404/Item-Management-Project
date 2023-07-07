@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-Items
+@lang('public.item')
 @endsection
 
 @section('cs-style')
@@ -149,7 +149,7 @@ page-top
 <div class="container-fluid">
     @if($errors->any())
     <div class="card mb-4 py-3 border-bottom-danger alert alert-light alert-dismissible fade show" role="alert">
-        <strong class="text-danger">Error!</strong>
+        <strong class="text-danger">@lang('public.error')!</strong>
         <ul>
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -163,7 +163,7 @@ page-top
 
     @if (session('success'))
     <div class="card mb-4 py-3 border-bottom-success alert alert-light alert-dismissible fade show" role="alert">
-        <strong class="text-success">Success!</strong> {{ session('success') }}
+        <strong class="text-success">@lang('public.success')!</strong> {{ session('success') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -174,18 +174,18 @@ page-top
 
     <div class="p-1">
         <div class="text-center">
-            <h1 class="h4 text-gray-900 mb-4">Enter Items Details</h1>
+            <h1 class="h4 text-gray-900 mb-4">@lang('public.enterItemDetailis')</h1>
 
         </div>
         <form class="user form-floating" action="@yield('form-action')" method="post" enctype="multipart/form-data">
             @csrf @yield('form-method')
             <div class="file-upload mb-2">
-                <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Image</button>
+                <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">@lang('public.addImage')</button>
 
                 <div class="image-upload-wrap" @yield('image-display-none')>
                     <input class="file-upload-input" type='file' name="filImage" onchange="readURL(this);" accept="image/*" />
                     <div class="drag-text">
-                        <h3>Drag and drop a file or select add Image</h3>
+                        <h3>@lang('public.dragAndDropImage')</h3>
                     </div>
                 </div>
                 <div class="file-upload-content" @yield('image-display-block')>
@@ -201,33 +201,33 @@ page-top
                 <div class="col-sm-6 mb-3 mb-sm-0">
                     <div class="form-floating">
                         <input type="text" class="form-control form-control-user" name="txtItemID" id="floatingInputGridId" value="@yield('item-id')" readonly placeholder="Item ID">
-                        <label for="floatingInputGridId">Item ID</label>
+                        <label for="floatingInputGridId">@lang('public.itemId')</label>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="form-floating">
                         <input type="text" class="form-control form-control-user" name="txtCode" id="floatingInputGridCode" @yield('code-value') value="{{ old('txtCode') }}" @yield('read-only') placeholder="Item Code">
-                        <label for="floatingInputGridCode">Item ID</label>
+                        <label for="floatingInputGridCode">@lang('public.itemCode')</label>
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="form-floating">
                     <input type="text" class="form-control form-control-user" name="txtName" id="floatingInputGridName" @yield('name-value') value="{{ old('txtName') }}" @yield('read-only') placeholder="Item Name">
-                    <label for="floatingInputGridName">Item Name</label>
+                    <label for="floatingInputGridName">@lang('public.itemName')</label>
                 </div>
             </div>
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
                     <div class="form-floating">
                         <input type="number" class="form-control form-control-user" name="txtStock" min="0" id="floatingInputGridStock" @yield('stock-value') value="{{ old('txtStock') }}" @yield('read-only') placeholder="Safety Stock">
-                        <label for="floatingInputGridStock">Safety Stock</label>
+                        <label for="floatingInputGridStock">@lang('public.safetyStock')</label>
                     </div>
                 </div>
                 <div class="col-sm-6 mb-3 mb-sm-0">
                     <div class="form-floating">
                         <input type="date" class="form-control form-control-user" name="txtDate" id="floatingInputGridDate" @yield('date-value') value="{{ old('txtDate') }}" @yield('read-only') placeholder="Recieve Date">
-                        <label for="floatingInputGridDate">Received Date</label>
+                        <label for="floatingInputGridDate">@lang('public.receivedDate')</label>
                     </div>
                 </div>
             </div>
@@ -237,7 +237,7 @@ page-top
                         <select class="form-select form-control-user-1" name="cbocategories" id="cbocategories" @yield('read-only') aria-label="Floating label select example">
                             @yield('categories')
                         </select>
-                        <label for="cboCategories">Categories</label>
+                        <label for="cboCategories">@lang('public.category')</label>
                     </div>
                 </div>
                 <div class="col-sm-1">
@@ -258,10 +258,10 @@ page-top
             <div class="form-group">
                 <div class="form-floating">
                     <textarea type="text" name="txtDescription" class="form-control form-control-user" id="floatingInputGridEmail" cols="30" rows="4" @yield('read-only') placeholder="Description">@yield('description-value'){{ old('txtDescription') }}</textarea>
-                    <label for="floatingInputGridEmail">Description</label>
+                    <label for="floatingInputGridEmail">@lang('public.description')</label>
                 </div>
             </div>
-            <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSave" value="Save Item">
+            <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSave" value="@lang('public.save')">
         </form>
     </div>
 </div>
@@ -275,7 +275,7 @@ page-top
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Add New Category</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">@lang('public.addNewCategory')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -284,15 +284,15 @@ page-top
                 <form action="" method="">
                     @csrf
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="txtCategory" id="CategoryName" placeholder="Category Name" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                        <input type="text" class="form-control" name="txtCategory" id="CategoryName" placeholder="@lang('public.category')" aria-label="Recipient's username" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="saveCategoryButton">Save</button>
+                            <button class="btn btn-outline-secondary" type="button" id="saveCategoryButton">@lang('public.save')</button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('public.close')</button>
             </div>
         </div>
     </div>
@@ -303,7 +303,7 @@ page-top
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Deletable Categories</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">@lang('public.deletableCategories')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -315,22 +315,17 @@ page-top
                         <select name="cboDelCategories" id="cboDelCategories" class="form-control form-control-user">
                         </select>
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="deleteCategoryButton">Delete</button>
+                            <button class="btn btn-outline-secondary" type="button" id="deleteCategoryButton">@lang('public.delete')</button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('public.close')</button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- Scroll to Top Button-->
-<a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-</a>
 
 
 @section('js')
@@ -384,69 +379,95 @@ page-top
     // Add Category (* On click save button)
     $('#saveCategoryButton').click(function() {
         var categoryName = $('#CategoryName').val();
+        alert(1);
 
         // Check if category name is empty
         if (categoryName == '') {
-            alert('Category name cannot be empty');
+            alert(2);
+            alert("@lang('public.categoryCannotBeEmpty')");
+            // Hide the dialog box and clear the input
+            $('#saveCategory').hide();
+            $('#CategoryName').val('');
+
+            //Remove background backdrop
+            $('body').removeClass('modal-open');
+            $('.modal-backdrop').remove();
             return;
         }
+        alert(3);
 
         // Check if category already exists
-        var exists = false;
+        var exists = true;
         $('#cbocategories option').each(function() {
+            alert(4);
             if ($(this).text() == categoryName) {
-                exists = true;
-                alert('Category already exists!');
+                alert(5);
+                exists = false;
+                alert("@lang('public.categoryAlreadyExist')");
                 return;
             }
         });
+        alert(6);
+        alert(exists);
+        if (exists) {
+            alert(7);
 
-        // Perform AJAX request to save the category
-        $.ajax({
-            url: "{{ route('categories.register') }}",
-            method: "POST",
-            data: {
-                "_token": "{{ csrf_token() }}",
-                "name": categoryName
-            },
-            success: function(response) {
+            // Perform AJAX request to save the category
+            $.ajax({
+                url: "{{ route('categories.register') }}",
+                method: "POST",
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "name": categoryName
+                },
+                success: function(response) {
 
-                // Clear the select box options
-                $('#cbocategories').empty();
+                    // Clear the select box options
+                    $('#cbocategories').empty();
 
-                // Add the new category options to the select box
-                $.each(response, function(index, category) {
-                    if (category.name == categoryName) {
-                        alert(categoryName);
+                    // Add the new category options to the select box
+                    $.each(response, function(index, category) {
+                        if (category.name == categoryName) {
+                            alert(categoryName);
+                            var option = $('<option>').text(category.name).val(category.id);
+                        }
                         var option = $('<option>').text(category.name).val(category.id);
-                    }
-                    var option = $('<option>').text(category.name).val(category.id);
-                    $('#cbocategories').append(option);
-                });
+                        $('#cbocategories').append(option);
+                    });
 
-                // Hide the dialog box and clear the input
-                $('#saveCategory').hide();
-                $('#CategoryName').val('');
+                    // Hide the dialog box and clear the input
+                    $('#saveCategory').hide();
+                    $('#CategoryName').val('');
 
-                //Remove background backdrop
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
+                    //Remove background backdrop
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
 
-                alert('Category added successfully!');
-            },
-            error: function(xhr, status, error) {
+                    alert("@lang('public.categoryAddedSuccessfully')");
+                },
+                error: function(xhr, status, error) {
 
-                // Hide the dialog box and clear the input
-                $('#saveCategory').hide();
-                $('#CategoryName').val('');
+                    // Hide the dialog box and clear the input
+                    $('#saveCategory').hide();
+                    $('#CategoryName').val('');
 
-                //Remove background backdrop
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
+                    //Remove background backdrop
+                    $('body').removeClass('modal-open');
+                    $('.modal-backdrop').remove();
 
-                alert(error);
-            }
-        });
+                    alert(error);
+                }
+            });
+        }
+
+        // Hide the dialog box and clear the input
+        $('#saveCategory').hide();
+        $('#CategoryName').val('');
+
+        //Remove background backdrop
+        $('body').removeClass('modal-open');
+        $('.modal-backdrop').remove();
+
     });
 
 
@@ -466,7 +487,7 @@ page-top
             },
             error: function(xhr, status, error) {
                 // Show error message
-                alert('Error', 'Failed to fetch categories');
+                alert(error);
             }
         });
 
@@ -502,10 +523,11 @@ page-top
                 //Remove background backdrop
                 $('body').removeClass('modal-open');
                 $('.modal-backdrop').remove();
+
+                alert("@lang('public.categoryDeletedSuccessfully')");
             },
             error: function(xhr, status, error) {
-                console.log('error');
-                console.log(error);
+                alert(error);
             }
         });
     });

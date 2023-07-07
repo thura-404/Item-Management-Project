@@ -33,12 +33,6 @@ class UpdateItemUpload extends DBTransaction
 
         $fileSize = filesize($fileSave);
 
-        Log::info($fileSave);
-        Log::info($fileExtension);
-        Log::info($fileSize);
-        Log::info($this->id);
-        Log::info($this->itemPrimaryId);
-
         $updateItemUpload = ItemsUpload::where('item_id', $this->id)->first();
         $updateItemUpload->file_path = $fileSave;
         $updateItemUpload->file_type = $fileExtension;

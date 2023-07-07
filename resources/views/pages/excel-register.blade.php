@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-Items
+@lang('public.item')
 @endsection
 
 @section('link')
@@ -130,7 +130,7 @@ page-top
 @endsection
 
 @section('nav-title')
-Item Register
+@lang('public.itemRegister')
 @endsection
 
 @section('nav-item-link')
@@ -138,7 +138,7 @@ Item Register
 @endsection
 
 @section('nav-item-text')
-Register Manually
+@lang('public.registerManually')
 @endsection
 
 @section('body-container')
@@ -146,7 +146,7 @@ Register Manually
 <div class="container-fluid">
     @if($errors->any())
     <div class="card mb-4 py-3 border-bottom-danger alert alert-light alert-dismissible fade show" role="alert">
-        <strong class="text-danger">Error!</strong>
+        <strong class="text-danger">@lang('public.error')!</strong>
         <ul>
             @foreach ($errors->all() as $error)
             <li>{!! $error !!}</li>
@@ -160,7 +160,7 @@ Register Manually
 
     @if (session('success'))
     <div class="card mb-4 py-3 border-bottom-success alert alert-light alert-dismissible fade show" role="alert">
-        <strong class="text-success">Success!</strong> {{ session('success') }}
+        <strong class="text-success">@lang('public.success')!</strong> {{ session('success') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -169,17 +169,17 @@ Register Manually
 
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <a href="{{ route('items.register-form') }}" class="btn btn-secondary">
-            <input type="radio" name="options" id="option1" autocomplete="off"> Register Manually
+            <input type="radio" name="options" id="option1" autocomplete="off"> @lang('public.registerManually')
         </a>
         <a href="{{ route('items.excel-form') }}" class="btn btn-secondary active">
-            <input type="radio" name="options" id="option2" autocomplete="off" checked> Add Excel File
+            <input type="radio" name="options" id="option2" autocomplete="off" checked> @lang('public.addExcel')
         </a>
     </div>
     <div class="p-1">
         <div class="text-center">
             <div class="row d-flex ">
                 <div class="col-7 d-flex justify-content-end">
-                    <h1 class="h4 text-gray-900 mb-4">Excel Upload</h1>
+                    <h1 class="h4 text-gray-900 mb-4">@lang('public.excelUpload')</h1>
                 </div>
                 <div class="col-5 d-flex flex-row-reverse">
                     <div class="row">
@@ -188,7 +188,7 @@ Register Manually
                                 <span class="icon text-white-50">
                                     <i class="fa-solid fa-file-arrow-down"></i>
                                 </span>
-                                <span class="text">Download Excel Format</span>
+                                <span class="text">@lang('public.downloadExcel')</span>
                             </a>
                         </div>
                     </div>
@@ -199,22 +199,22 @@ Register Manually
         <form class="user" action="{{ route('items.excel-register') }}" method="post" enctype="multipart/form-data">
             @csrf
             <div class="file-upload mb-2">
-                <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add Excel File</button>
+                <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">@lang('public.addExcel')</button>
 
                 <div class="image-upload-wrap">
                     <input class="file-upload-input" type='file' name="filExcel" onchange="readURL(this);" />
                     <div class="drag-text">
-                        <h3>Drag and drop a file or select excel file</h3>
+                        <h3>@lang('public.dragAndDropExcel')</h3>
                     </div>
                 </div>
                 <div class="file-upload-content">
                     <img class="file-upload-image" src="#" alt="your image" />
                     <div class="image-title-wrap">
-                        <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded Image</span></button>
+                        <button type="button" onclick="removeUpload()" class="remove-image">Remove <span class="image-title">Uploaded File</span></button>
                     </div>
                 </div>
             </div>
-            <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSave" value="Save Items">
+            <input type="submit" class="btn btn-primary btn-user btn-block" name="btnSave" value="@lang('public.save')">
         </form>
     </div>
 </div>

@@ -13,16 +13,17 @@ use Illuminate\Support\Facades\Log;
  */
 class SaveItem extends DBTransaction
 {
-    private $request;
+    private $request, $item_id;
 
     /**
      * assign request
      * @author Thura Win
      * @create 23/06/2023
      */
-    public function __construct($request)
+    public function __construct($request, $item_id)
     {
         $this->request = $request;
+        $this->item_id = $item_id;
     }
 
     /**
@@ -35,7 +36,7 @@ class SaveItem extends DBTransaction
     {
 
         $newItem = new Item();
-        $newItem->item_id = $this->request['txtItemID'];
+        $newItem->item_id = $this->item_id;
         $newItem->item_code = $this->request['txtCode'];
         $newItem->item_name = $this->request['txtName'];
         $newItem->category_id = $this->request['cbocategories'];

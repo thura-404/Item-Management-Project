@@ -99,10 +99,6 @@ class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAuto
                     'font' => [
                         'color' => ['rgb' => $fontColor->getRGB()], // Dark blue font color
                     ],
-                    // 'fill' => [
-                    //     'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                    //     'startColor' => ['rgb' => 'FFFFFF'], // White background
-                    // ],
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_MEDIUM,
@@ -110,12 +106,13 @@ class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAuto
                         ],
                     ],
                     'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER, // Center align text horizontally
                         'vertical' => Alignment::VERTICAL_CENTER, // Center align text vertically
                     ],
                 ]);
 
                 $event->sheet->getDelegate()->getStyle($cellRangeHeader)->getFont()->setSize(14);
+                $event->sheet->getDelegate()->getColumnDimension('G')->setWidth(30);
+                $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(false);
 
                 // Adjust row height to accommodate the border
                 $worksheet = $event->sheet->getDelegate();

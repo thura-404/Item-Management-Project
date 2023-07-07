@@ -28,7 +28,7 @@ class PDFDownload
         $dompdf->loadHtml($html);
 
         // Set paper size and orientation (optional)
-        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->setPaper('A4', 'landscape');
 
         // Render the HTML content to PDF
         $dompdf->render();
