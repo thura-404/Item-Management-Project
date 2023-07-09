@@ -379,11 +379,9 @@ page-top
     // Add Category (* On click save button)
     $('#saveCategoryButton').click(function() {
         var categoryName = $('#CategoryName').val();
-        alert(1);
 
         // Check if category name is empty
         if (categoryName == '') {
-            alert(2);
             alert("@lang('public.categoryCannotBeEmpty')");
             // Hide the dialog box and clear the input
             $('#saveCategory').hide();
@@ -394,23 +392,17 @@ page-top
             $('.modal-backdrop').remove();
             return;
         }
-        alert(3);
 
         // Check if category already exists
         var exists = true;
         $('#cbocategories option').each(function() {
-            alert(4);
             if ($(this).text() == categoryName) {
-                alert(5);
                 exists = false;
                 alert("@lang('public.categoryAlreadyExist')");
                 return;
             }
         });
-        alert(6);
-        alert(exists);
         if (exists) {
-            alert(7);
 
             // Perform AJAX request to save the category
             $.ajax({
@@ -428,10 +420,10 @@ page-top
                     // Add the new category options to the select box
                     $.each(response, function(index, category) {
                         if (category.name == categoryName) {
-                            alert(categoryName);
+                            var option = $('<option selected>').text(category.name).val(category.id);
+                        } else {
                             var option = $('<option>').text(category.name).val(category.id);
                         }
-                        var option = $('<option>').text(category.name).val(category.id);
                         $('#cbocategories').append(option);
                     });
 
