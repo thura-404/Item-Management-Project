@@ -259,7 +259,9 @@ class ItemController extends Controller
     public function autoComplete(Request $request)
     {
         try {
-            $suggestItems = $this->itemInterface->autoCompleteItems($request);
+            $term = $request->input('term');
+
+            $suggestItems = $this->itemInterface->getItemId();
             return response()->json($suggestItems);
         } catch (\Exception $e) {
             return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);

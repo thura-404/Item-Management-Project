@@ -42,8 +42,8 @@ class ItemRepository implements ItemInterface
     public function getItemById($id)
     {
         return Item::join('categories', 'items.category_id', '=', 'categories.id')
-        ->leftJoin('items_uploads', 'items.id', '=', 'items_uploads.item_id')
-        ->select('items.*', 'categories.name as name', 'items_uploads.file_path as image')
+            ->leftJoin('items_uploads', 'items.id', '=', 'items_uploads.item_id')
+            ->select('items.*', 'categories.name as name', 'items_uploads.file_path as image')
             ->find($id);
     }
 
@@ -114,18 +114,14 @@ class ItemRepository implements ItemInterface
     }
 
     /**
-     * suggest Items.
+     * suggest Item ID.
      * @author Thura Win
      * @create 03/07/2023
      * @return array
      */
-    public function autoCompleteItems($data)
+    public function getItemId()
     {
-        $suggestItems = Item::where('item_id', 'like', '%' . $data['term'] . '%')
-            ->orWhere('item_code', 'like', '%' . $data['term'] . '%')
-            ->orWhere('item_name', 'like', '%' . $data['term'] . '%')
-            ->limit(10)
-            ->get(['item_id', 'item_code', 'item_name']);
+        $suggestItems = Item::pluck('item_id')->toArray();
         return $suggestItems;
     }
 }

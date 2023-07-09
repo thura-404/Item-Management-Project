@@ -79,8 +79,10 @@ page-top
             <div class="form-group row">
                 <div class="col-sm-2 mb-3 mb-sm-0">
                     <div class="form-floating">
-                        <input type="text" name="txtItemId" class="form-control form-control-user" id="item_id" placeholder="Item ID" value="{{ $formData['txtItemId'] ?? '' }}">
+                        <input type="text" name="txtItemId" list="item_id_suggests" class="form-control form-control-user" id="item_id" placeholder="Item ID" value="{{ $formData['txtItemId'] ?? '' }}" autocomplete="off">
                         <label for="item_id">@lang('public.itemId')</label>
+                        <datalist id="item_id_suggests">
+                        </datalist>
                     </div>
                 </div>
                 <div class="col-sm-2">
@@ -353,6 +355,17 @@ page-top
 
 <script>
     $(document).ready(function() {
+
+        $.ajax({
+            url: "{{ route('items.suggestions') }}",
+            type: 'GET',
+            success: function(data) {
+                var datalist = $('#item_id_suggests');
+                $.each(data, function(index, item) {
+                    datalist.append('<option value="' + item + '">');
+                });
+            }
+        });
 
         $('[data-toggle="tooltip"]').tooltip()
 
