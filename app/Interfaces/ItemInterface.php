@@ -14,6 +14,7 @@ interface ItemInterface
     public function searchItems($data);
 
     public function getItemId();
+    public function fetchDetails($itemId);
 
     public function downloadItems();
 }

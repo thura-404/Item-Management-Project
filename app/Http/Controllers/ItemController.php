@@ -259,10 +259,40 @@ class ItemController extends Controller
     public function autoComplete(Request $request)
     {
         try {
-            $term = $request->input('term');
-
             $suggestItems = $this->itemInterface->getItemId();
             return response()->json($suggestItems);
+        } catch (\Exception $e) {
+            return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * suggest items for autocomplete.
+     *
+     * @author Thura Win
+     * @create 03/07/2023
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function fetchItemDetails(Request $request)
+    {
+        try {
+            $itemId = $request->input('item_id');
+
+            $suggestItems = $this->itemInterface->fetchDetails($itemId);
+
+            if ($suggestItems) {
+                $data = [
+                    'code' => $suggestItems->item_code,
+                    'name' => $suggestItems->item_name
+                ];
+            } else {
+                $data = [
+                    'code' => '',
+                    'name' => ''
+                ];
+            }
+            return response()->json($data);
         } catch (\Exception $e) {
             return redirect()->route('items.excel-form')->withErrors(['message' => $e->getMessage()]);
         }

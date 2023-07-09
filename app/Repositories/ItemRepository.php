@@ -124,4 +124,16 @@ class ItemRepository implements ItemInterface
         $suggestItems = Item::pluck('item_id')->toArray();
         return $suggestItems;
     }
+
+    /**
+     * suggest Item ID.
+     * @author Thura Win
+     * @create 03/07/2023
+     * @return array
+     */
+    public function fetchDetails($itemId)
+    {
+        $suggestItems = Item::where('item_id', $itemId)->first();
+        return $suggestItems;
+    }
 }

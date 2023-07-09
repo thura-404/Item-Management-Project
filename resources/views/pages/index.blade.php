@@ -367,6 +367,34 @@ page-top
             }
         });
 
+        // Get the input elements
+        var txtItemId = $('#item_id');
+        var txtCode = $('#item_code');
+        var txtItemName = $('#item_name');
+
+        // Handle change event on txtItemId
+        txtItemId.on('input', function() {
+            var selectedItem = $(this).val();
+            // Check if the selected item is in the datalist
+            var option = $('datalist#item_id_suggests').find('option[value="' + selectedItem + '"]');
+            if (option.length > 0) {
+                // Fetch data from the database using AJAX
+                $.ajax({
+                    url: "{{ route('items.fetch-details') }}",
+                    type: 'GET',
+                    data: {
+                        item_id: selectedItem
+                    },
+                    success: function(data) {
+                        // Update txtCode and txtItemName with the fetched data
+                        txtCode.val(data.code);
+                        txtItemName.val(data.name);
+                    }
+                });
+            }
+        });
+
+
         $('[data-toggle="tooltip"]').tooltip()
 
         $('#itemInactiveModel').on('show.bs.modal', function(event) {
