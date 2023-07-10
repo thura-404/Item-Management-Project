@@ -167,7 +167,7 @@ Back
                 </ul>
                 <div class="col-7" style="max-height: 24rem;">
                     <a href="#">
-                        <img class="card-img-top rounded" style="max-height: 24rem;" src="{{ $item['image'] ? asset($item['image']) : asset('placeholder-image/image-folder-animate.svg') }}" alt="Card image cap">
+                        <img class="card-img-top rounded" style="max-height: 24rem;" src="{{ $item['image'] ? asset($item['image']) : asset('placeholder-image/photos-animate.svg') }}" alt="Card image cap">
                     </a>
                 </div>
             </div>

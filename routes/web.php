@@ -42,7 +42,6 @@ Route::group(['middleware' => 'checkEmployeeLogin'], function(){
         Route::get('/search-export', 'ItemController@exportSearchItems')->name('items.search-export');
         Route::get('/suggestions', 'ItemController@autoComplete')->name('items.suggestions');
         Route::get('/fetch-item-details', 'ItemController@fetchItemDetails')->name('items.fetch-details');
-
     
         Route::group(['prefix' => '/{id}'], function(){
             Route::get('/export', 'ItemController@exportSearchItems')->name('items.export');

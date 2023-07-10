@@ -59,6 +59,7 @@ return [
     'itemNameRequired' => 'ပစ္စည်းနာမည်ရိုက်ထည့်ရန်လိုသည်', 
     'stockRequired' => 'လက်ကျန်ရိုက်ထည့်ရန်လိုသည်',
     'stockMustBeNumber' => 'လက်ကျန်သည်အရေအတွက်ဖြစ်ရပါမည်',
+    'stockMustBeLess' => 'လက်ကျန်သည် ၉၉၉၉၉ ထက် မကြီးရပါ',
     'dateIsRequired' => 'ရရှိသည့်နေ့ရိုက်ထည့်ရန်လိုသည်',
     'dateIsInvalid' => 'ရက်စွဲမှားနေသည်',
     'categoryRequired' => 'အမျိုးအစားရိုက်ထည့်ရန်လိုသည်',

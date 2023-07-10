@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class CategoryAddRequest
+ * Class ItemSearchRequest
  * @author Thura Win
  * @create 23/06/2023
  */

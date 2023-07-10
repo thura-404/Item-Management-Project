@@ -11,7 +11,7 @@
 
     <title>@yield('title') - IRP</title>
     <!-- add icon link -->
-    <link rel="icon" href="{{ asset('placeholder-image/myanmar.png') }}" type="image/x-icon">
+    <link rel="icon" href="{{ asset('placeholder-image/irp-low-resolution-logo-color-on-transparent-background.svg') }}" type="image/x-icon">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -42,9 +42,8 @@
             <!-- Sidebar - Brand -->
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ route('items.list' ) }}">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <img src="{{ asset('placeholder-image/irp-high-resolution-logo-white-on-transparent-background.svg') }}" width="50" height="50" style="rotate:calc(15deg);" alt="">
                 </div>
-                <div class="sidebar-brand-text mx-3">IRP</div>
             </a>
 
             <!-- Divider -->

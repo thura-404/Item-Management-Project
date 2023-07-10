@@ -278,13 +278,12 @@ class ItemController extends Controller
     {
         try {
             $itemId = $request->input('item_id');
-
             $suggestItems = $this->itemInterface->fetchDetails($itemId);
-
             if ($suggestItems) {
                 $data = [
                     'code' => $suggestItems->item_code,
-                    'name' => $suggestItems->item_name
+                    'name' => $suggestItems->item_name,
+                    'category' => $suggestItems->category_id,
                 ];
             } else {
                 $data = [
@@ -392,7 +391,9 @@ class ItemController extends Controller
                 }
             }
 
-
+            if ($item_id != $request->txtItemID) {
+                return redirect()->route('items.register-form')->with(['success' => __('public.itemCreated') . ". ID \"" . $item_id . "\""]);
+            }
             return redirect()->route('items.register-form')->with(['success' => __('public.itemCreated')]);
         } catch (\Exception $e) {
             return redirect()->route('items.register-form')->withErrors(['message' => $e->getMessage()]);

@@ -81,15 +81,15 @@ class ItemRepository implements ItemInterface
             ->select('items.*', 'categories.name as name');
 
         if (!empty($data['txtItemId'])) {
-            $searchItems->where('items.item_id', "LIKE", $data['txtItemId']);
+            $searchItems->where('items.item_id', "LIKE", "%" . $data['txtItemId'] . "%");
         }
 
         if (!empty($data['txtCode'])) {
-            $searchItems->where('items.item_code', "LIKE", $data['txtCode']);
+            $searchItems->where('items.item_code', "LIKE", "%" . $data['txtCode'] . "%");
         }
 
         if (!empty($data['txtItemName'])) {
-            $searchItems->where('items.item_name', "LIKE", $data['txtItemName']);
+            $searchItems->where('items.item_name', "LIKE", "%" . $data['txtItemName'] . "%");
         }
 
         if (!empty($data['cboCategories'])) {

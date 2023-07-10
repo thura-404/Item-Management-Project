@@ -220,7 +220,7 @@ page-top
             <div class="form-group row">
                 <div class="col-sm-6 mb-3 mb-sm-0">
                     <div class="form-floating">
-                        <input type="number" class="form-control form-control-user" name="txtStock" min="0" id="floatingInputGridStock" @yield('stock-value') value="{{ old('txtStock') }}" @yield('read-only') placeholder="Safety Stock">
+                        <input type="number" class="form-control form-control-user" name="txtStock" min="0" max="99999" id="floatingInputGridStock" @yield('stock-value') value="{{ old('txtStock') }}" @yield('read-only') placeholder="Safety Stock">
                         <label for="floatingInputGridStock">@lang('public.safetyStock')</label>
                     </div>
                 </div>
@@ -334,6 +334,7 @@ page-top
 
 <script>
     function readURL(input) {
+
         if (input.files && input.files[0]) {
 
             var reader = new FileReader();

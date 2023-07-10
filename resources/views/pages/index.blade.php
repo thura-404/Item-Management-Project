@@ -45,6 +45,18 @@ page-top
 @section('body-container')
 <!-- Begin Page Content -->
 <div class="container-fluid">
+    @if($items->count() == 0 && $items->currentPage() > 1)
+    @php
+    $previousPageUrl = $items->previousPageUrl();
+    if (!$previousPageUrl) {
+    $previousPageUrl = $items->url(1);
+    }
+    @endphp
+
+    <script>
+        window.location.href = "{{ $previousPageUrl }}";
+    </script>
+    @endif
 
     @if($errors->any())
     <div class="card mb-4 py-3 border-bottom-danger alert alert-light alert-dismissible fade show" role="alert">
@@ -68,6 +80,7 @@ page-top
         </button>
     </div>
     @endif
+
 
     <div class="p-1 mb-2">
         <div class="text-center">
@@ -225,7 +238,7 @@ page-top
                                                 @csrf
                                                 <input type="hidden" value="{{ $formData['txtItemId'] ?? '' }}" name="txtItemId">
                                                 <input type="hidden" value="{{ $formData['txtCode'] ?? '' }}" name="txtCode">
-                                                <input type="hidden" value="{{ $formData['txtName'] ?? '' }}" name="txtItemName">
+                                                <input type="hidden" value="{{ $formData['txtItemName'] ?? '' }}" name="txtItemName">
                                                 <input type="hidden" value="{{ $formData['cboCategories'] ?? '' }}" name="cboCategories">
                                                 <input type="hidden" value="excel" name="type">
                                                 <button type="submit" class="dropdown-item">Download Excel</button>
@@ -234,7 +247,7 @@ page-top
                                                 @csrf
                                                 <input type="hidden" value="{{ $formData['txtItemId'] ?? '' }}" name="txtItemId">
                                                 <input type="hidden" value="{{ $formData['txtCode'] ?? '' }}" name="txtCode">
-                                                <input type="hidden" value="{{ $formData['txtName'] ?? '' }}" name="txtItemName">
+                                                <input type="hidden" value="{{ $formData['txtItemName'] ?? '' }}" name="txtItemName">
                                                 <input type="hidden" value="{{ $formData['cboCategories'] ?? '' }}" name="cboCategories">
                                                 <input type="hidden" value="pdf" name="type">
                                                 <button type="submit" class="dropdown-item">Download PDF</button>
@@ -371,7 +384,7 @@ page-top
         var txtItemId = $('#item_id');
         var txtCode = $('#item_code');
         var txtItemName = $('#item_name');
-
+        var cboCategory = $('#cboCategories');
         // Handle change event on txtItemId
         txtItemId.on('input', function() {
             var selectedItem = $(this).val();
@@ -389,11 +402,11 @@ page-top
                         // Update txtCode and txtItemName with the fetched data
                         txtCode.val(data.code);
                         txtItemName.val(data.name);
+                        cboCategory.val(data.category).attr("selected", "selected");
                     }
                 });
             }
         });
-
 
         $('[data-toggle="tooltip"]').tooltip()
 

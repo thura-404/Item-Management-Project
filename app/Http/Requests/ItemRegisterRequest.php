@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class CategoryAddRequest
+ * Class ItemRequestRequest
  * @author Thura Win
  * @create 23/06/2023
  */
@@ -35,7 +35,7 @@ class ItemRegisterRequest extends FormRequest
             'txtItemID' => 'required',
             'txtCode' => 'required',
             'txtName' => 'required',
-            'txtStock' => 'required|numeric',
+            'txtStock' => 'required|numeric|max:99999',
             'txtDate' => 'required|date',
             'cbocategories' => 'required|exists:categories,id',
             'filImage' => 'mimes:jpeg,png,jpg,gif|max:2048'
@@ -57,6 +57,7 @@ class ItemRegisterRequest extends FormRequest
             'txtName.required' => __('public.itemNameRequired'),
             'txtStock.required' => __('public.stockRequired'),
             'txtStock.numeric' => __('public.stockMustBeNumber'),
+            'txtStock.max' => __('public.stockMustBeLess'),
             'txtDate.required' => __('public.dateIsRequired'),
             'txtDate.date' => __('public.dateIsInvalid'),
             'cbocategories.required' => __('public.categoryRequired'),

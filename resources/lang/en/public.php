@@ -59,6 +59,7 @@ return[
     'itemNameRequired' => 'Item Name is Required',
     'stockRequired' => 'Stock is Required',
     'stockMustBeNumber' => 'Stock Must Be Number',
+    'stockMustBeLess' => 'Stock must be less than or equal to 99999',
     'dateIsRequired' => 'Date is Required',
     'dateIsInvalid' => 'Date is Invalid',
     'categoryRequired' => 'Category is Required',
