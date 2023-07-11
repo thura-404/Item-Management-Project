@@ -1,3 +1,10 @@
+@php
+$currentUrl = url()->current();
+$previousUrl = url()->previous();
+if ($currentUrl != $previousUrl)
+Session::put('requestReferrer', $previousUrl);
+@endphp
+
 @extends('layouts.form')
 
 @section('form-nav-title')
@@ -14,7 +21,7 @@ Item Update
 @endsection
 
 @section('form-method')
-    @method('PATCH')
+@method('PATCH')
 @endsection
 
 
@@ -63,4 +70,3 @@ value = "{{ $item['received_date'] }}"
 @section('description-value')
 {{ $item['description']  }}
 @endsection
-

@@ -8,12 +8,13 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize, WithEvents
+class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize, WithEvents, WithMapping
 {
     private $itemsToDownload;
 
@@ -47,9 +48,30 @@ class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAuto
      * @create 30/6/2023
      * @return array
      */
+    public function map($item): array
+    {
+        // Modify the data here before exporting it to excel
+        $newDescription = wordwrap($item->description, 50, "\n");
+
+        return [
+            $item->item_code,
+            $item->item_name,
+            $item->name,
+            $item->category,
+            $item->safety_stock,
+            $item->received_date,
+            $newDescription,
+        ];
+    }
+
+    /**
+     * @author Thura Win
+     * @create 30/6/2023
+     * @return array
+     */
     public function headings(): array
     {
-        return ['Item ID', 'Item Code', 'Item Name', 'Category', 'Safety Stock', 'Received Date', 'Description' ];
+        return ['Item ID', 'Item Code', 'Item Name', 'Category', 'Safety Stock', 'Received Date', 'Description'];
     }
 
     /**

@@ -8,12 +8,15 @@ use App\Exports\ItemsExport;
 use Illuminate\Http\Request;
 use App\Interfaces\ItemInterface;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Interfaces\CategoryInterface;
 use App\DBTransactions\Items\SaveItem;
 use App\Interfaces\ItemUploadInterface;
+use Illuminate\Support\Facades\Session;
 use App\DBTransactions\Items\ActiveItem;
 use App\DBTransactions\Items\DeleteItem;
+use App\DBTransactions\Items\UpdateItem;
 use App\Exports\ItemRegiserFormatExport;
 use App\Http\Requests\ItemDeleteRequest;
 use App\Http\Requests\ItemSearchRequest;
@@ -21,7 +24,6 @@ use App\Imports\ItemRegisterExcelImport;
 use App\DBTransactions\Items\PDFDownload;
 use App\Http\Requests\ExcelImportRequest;
 use App\DBTransactions\Items\InactiveItem;
-use App\DBTransactions\Items\UpdateItem;
 use App\Http\Requests\ItemRegisterRequest;
 use App\DBTransactions\ItemsUploads\SaveItemUpload;
 use App\DBTransactions\ItemsUploads\DeleteItemUpload;
@@ -77,7 +79,7 @@ class ItemController extends Controller
             // Handle POST request
             // Perform form processing, database operations, etc.
             $searchItems = $this->itemInterface->searchItems($request); // search items
-            $searchResult = $searchItems->paginate(20);
+            $searchResult = $searchItems->paginate(3);
             if (!$searchResult) {
                 return view('pages.index')->with(['items' => $searchResult])->with('categories', $categories);
             }
@@ -453,6 +455,7 @@ class ItemController extends Controller
     {
         //
         try {
+
             $isDeleted = $this->itemInterface->getItemById($id);
             if ($isDeleted == null) { // If item not found
                 return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
@@ -504,7 +507,7 @@ class ItemController extends Controller
             }
 
 
-            return redirect()->route('items.update', ['id' => $id])->with(['success' => __('public.itemUpdatedSuccessfully')]);
+            return redirect(Session::get('requestReferrer'))->with(['success' => __('public.itemUpdatedSuccessfully')]);
         } catch (\Exception $e) { // If error 
             return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => $e->getMessage()]);
         }
@@ -546,7 +549,6 @@ class ItemController extends Controller
             if (!$isDeleted) {
                 return redirect()->back()->withErrors(['message' => $isDeleted]);
             }
-
             return redirect()->back()->with(['id' => $request->txtId, 'success' => __('public.itemDeletedSuccessfully')]);
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);

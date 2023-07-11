@@ -1,3 +1,28 @@
+@if(isset($items) && $items->count() == 0 && $items->currentPage() > 1)
+    @php
+        // Get the current URL
+        $currentUrl = url()->current();
+
+        // Get the URL parameters as an associative array
+        $queryParams = request()->query();
+
+        // Decrease the page value by one
+        $previousPage = $queryParams['page'] - 1;
+
+        // Set the updated page value in the query parameters
+        $queryParams['page'] = $previousPage;
+
+        // Generate the previous page URL with the updated query parameters
+        $previousPageUrl = $currentUrl . '?' . http_build_query($queryParams);
+
+        // Redirect to the previous page URL
+        header('Location: ' . $previousPageUrl);
+        exit;
+    @endphp
+@endif
+
+
+
 @extends('layouts.app')
 
 @section('title')
@@ -45,19 +70,6 @@ page-top
 @section('body-container')
 <!-- Begin Page Content -->
 <div class="container-fluid">
-    @if($items->count() == 0 && $items->currentPage() > 1)
-    @php
-    $previousPageUrl = $items->previousPageUrl();
-    if (!$previousPageUrl) {
-    $previousPageUrl = $items->url(1);
-    }
-    @endphp
-
-    <script>
-        window.location.href = "{{ $previousPageUrl }}";
-    </script>
-    @endif
-
     @if($errors->any())
     <div class="card mb-4 py-3 border-bottom-danger alert alert-light alert-dismissible fade show" role="alert">
         <strong>@lang('public.error')!</strong>
@@ -88,7 +100,6 @@ page-top
         </div>
         <form class="user" action="{{ route('items.search') }}" method="get" enctype="multipart/form-data">
             @csrf
-
             <div class="form-group row">
                 <div class="col-sm-2 mb-3 mb-sm-0">
                     <div class="form-floating">
@@ -128,10 +139,6 @@ page-top
         </form>
 
     </div>
-
-
-
-
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -274,7 +281,7 @@ page-top
 
 
                 <!-- Display pagination links -->
-                {{ $items->appends(['txtItemId' => request('txtItemId'), 'txtCode' => request('txtCode'),  'txtName' => request('txtName'), 'cboCategories' => request('cboCategories')])->links() }}
+                {{ $items->withQueryString()->links() }}
             </div>
         </div>
     </div>
