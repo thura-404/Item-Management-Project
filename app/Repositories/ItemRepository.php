@@ -28,8 +28,7 @@ class ItemRepository implements ItemInterface
         return Item::join('categories', 'items.category_id', '=', 'categories.id')
             ->leftJoin('items_uploads', 'items.id', '=', 'items_uploads.item_id')
             ->select('items.*', 'categories.name as name', 'items_uploads.file_path as image')
-            ->orderBy('item_id', 'desc')
-            ->paginate(20);
+            ->orderBy('item_id', 'desc');
     }
 
     /**
@@ -135,5 +134,29 @@ class ItemRepository implements ItemInterface
     {
         $suggestItems = Item::where('item_id', $itemId)->first();
         return $suggestItems;
+    }
+
+    /**
+     * Get All Active Items.
+     * @author Thura Win
+     * @create 12/07/2023
+     * @return array
+     */
+    public function getActiveItems()
+    {
+        $activeItems = Item::where('deleted_at', null)->get();
+        return $activeItems;
+    }
+
+    /**
+     * Get All Inactive Items.
+     * @author Thura Win
+     * @create 12/07/2023
+     * @return array
+     */
+    public function getInactiveItems()
+    {
+        $inactiveItems = Item::where('deleted_at', '!=', null)->get();
+        return $inactiveItems;
     }
 }

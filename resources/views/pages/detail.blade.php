@@ -1,3 +1,10 @@
+@php
+$currentUrl = url()->current();
+$previousUrl = url()->previous();
+if ($currentUrl != $previousUrl)
+Session::put('requestReferrer', $previousUrl);
+@endphp
+
 @extends('layouts.app')
 
 @section('title')
@@ -51,7 +58,7 @@ Back
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <a href="{{ route('items.list')  }}" class="btn btn-primary btn-icon-split">
+            <a href="{{ Session::get('requestReferrer') }}" class="btn btn-primary btn-icon-split">
                 <span class="icon text-white-50">
                     <i class="fas fa-arrow-left"></i>
                 </span>

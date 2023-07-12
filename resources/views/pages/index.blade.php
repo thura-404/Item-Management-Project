@@ -1,24 +1,24 @@
 @if(isset($items) && $items->count() == 0 && $items->currentPage() > 1)
-    @php
-        // Get the current URL
-        $currentUrl = url()->current();
+@php
+// Get the current URL
+$currentUrl = url()->current();
 
-        // Get the URL parameters as an associative array
-        $queryParams = request()->query();
+// Get the URL parameters as an associative array
+$queryParams = request()->query();
 
-        // Decrease the page value by one
-        $previousPage = $queryParams['page'] - 1;
+// Decrease the page value by one
+$previousPage = $queryParams['page'] - 1;
 
-        // Set the updated page value in the query parameters
-        $queryParams['page'] = $previousPage;
+// Set the updated page value in the query parameters
+$queryParams['page'] = $previousPage;
 
-        // Generate the previous page URL with the updated query parameters
-        $previousPageUrl = $currentUrl . '?' . http_build_query($queryParams);
+// Generate the previous page URL with the updated query parameters
+$previousPageUrl = $currentUrl . '?' . http_build_query($queryParams);
 
-        // Redirect to the previous page URL
-        header('Location: ' . $previousPageUrl);
-        exit;
-    @endphp
+// Redirect to the previous page URL
+header('Location: ' . $previousPageUrl);
+exit;
+@endphp
 @endif
 
 
@@ -141,8 +141,13 @@ page-top
     </div>
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">@lang('public.item')</h6>
+        <div class="card-header p-3 d-flex flex-row">
+            <div class="col-6">
+                <h6 class="m-0 font-weight-bold text-primary">@lang('public.item')</h6>
+            </div>
+            <div class="col-6 d-flex flex-row-reverse">
+                <h6 class="m-0 font-weight-bold text-primary">@lang('public.totalRecords'): {{$total}}</h6>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -273,7 +278,7 @@ page-top
                 </table>
                 @else
                 <tr>
-                    <td colspan="4">@lang('public.noData')</td>
+                    <td colspan="6">@lang('public.noData')</td>
                 </tr>
                 </tbody>
                 </table>

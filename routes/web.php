@@ -29,9 +29,13 @@ Route::group(['middleware' => 'checkEmployeeLogin'], function(){
         return redirect()->route('items.list');
     });
     
+    Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     
     Route::group(['prefix' => 'items'], function(){
+        Route::get('/allItems', 'ItemController@getAllItems')->name('items.allItems');
         Route::get('/list', 'ItemController@index')->name('items.list');
+        Route::get('/getActive', 'ItemController@getActiveItems')->name('items.getActive');
+        Route::get('/getInactive', 'ItemController@getInactiveItems')->name('items.getInactive');
         Route::get('/register-form', 'ItemController@create')->name('items.register-form');
         Route::get('/excel-form', 'ItemController@createExcel')->name('items.excel-form');
         Route::get('/excel-format', 'ItemController@ExcelFormatDownload')->name('items.excel-format');

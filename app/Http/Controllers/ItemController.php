@@ -53,7 +53,22 @@ class ItemController extends Controller
         //
         $items = $this->itemInterface->getAllItems();
         $categories = $this->categoryInterface->getUsedCategories();
-        return view('pages.index')->with('items', $items)->with('categories', $categories);
+        $totalRecord = $items->count();
+        return view('pages.index')->with('items', $items->paginate(20))->with('total', $totalRecord)->with('categories', $categories);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @author Thura Win
+     * @create 23/06/2023
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllItems()
+    {
+        //
+        $items = $this->itemInterface->getAllItems();
+        return $items;
     }
 
     /**
@@ -79,13 +94,14 @@ class ItemController extends Controller
             // Handle POST request
             // Perform form processing, database operations, etc.
             $searchItems = $this->itemInterface->searchItems($request); // search items
-            $searchResult = $searchItems->paginate(3);
+            $totalRecord = $searchItems->count();
+            $searchResult = $searchItems->paginate(20);
             if (!$searchResult) {
-                return view('pages.index')->with(['items' => $searchResult])->with('categories', $categories);
+                return view('pages.index')->with(['items' => $searchResult])->with('total', $totalRecord)->with('categories', $categories);
             }
-            return view('pages.index')->with('items', $searchResult)->with('categories', $categories)->with('formData', $formData)->with('search', true);
+            return view('pages.index')->with('items', $searchResult)->with('categories', $categories)->with('formData', $formData)->with('search', true)->with('total', $totalRecord);
         } catch (\Exception $e) {
-            return view('pages.index')->withErrors(['message' => $e->getMessage()])->with('categories', $categories);
+            return view('pages.index')->withErrors(['message' => $e->getMessage()])->with('categories', $categories) - with('total', $totalRecord);
         }
     }
 
@@ -356,6 +372,40 @@ class ItemController extends Controller
                 return response()->back()->withErrors(['message' => $isActive]);
             }
             return redirect()->back()->with(['success' => __('public.itemInactivated')]);
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get All Active Items.
+     * @author Thura Win
+     * @create 12/07/2023
+     * @return array
+     */
+    public function getActiveItems()
+    {
+        try {
+            $activeItems = $this->itemInterface->getActiveItems();
+
+           return $activeItems;
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get All Active Items.
+     * @author Thura Win
+     * @create 12/07/2023
+     * @return array
+     */
+    public function getInactiveItems()
+    {
+        try {
+            $inActiveItems = $this->itemInterface->getInactiveItems();
+            
+            return $inActiveItems;
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }

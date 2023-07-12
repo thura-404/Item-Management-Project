@@ -14,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize, WithEvents, WithMapping
+class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAutoSize, WithEvents
 {
     private $itemsToDownload;
 
@@ -41,27 +41,6 @@ class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAuto
     public function title(): string
     {
         return 'Items';
-    }
-
-    /**
-     * @author Thura Win
-     * @create 30/6/2023
-     * @return array
-     */
-    public function map($item): array
-    {
-        // Modify the data here before exporting it to excel
-        $newDescription = wordwrap($item->description, 50, "\n");
-
-        return [
-            $item->item_code,
-            $item->item_name,
-            $item->name,
-            $item->category,
-            $item->safety_stock,
-            $item->received_date,
-            $newDescription,
-        ];
     }
 
     /**
@@ -128,6 +107,7 @@ class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAuto
                         ],
                     ],
                     'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER, // Center align text horizontally
                         'vertical' => Alignment::VERTICAL_CENTER, // Center align text vertically
                     ],
                 ]);
@@ -135,6 +115,7 @@ class ItemsExport implements FromCollection, WithTitle, WithHeadings, ShouldAuto
                 $event->sheet->getDelegate()->getStyle($cellRangeHeader)->getFont()->setSize(14);
                 $event->sheet->getDelegate()->getColumnDimension('G')->setWidth(30);
                 $event->sheet->getDelegate()->getColumnDimension('G')->setAutoSize(false);
+                $event->sheet->getDelegate()->getStyle('G')->getAlignment()->setWrapText(true);
 
                 // Adjust row height to accommodate the border
                 $worksheet = $event->sheet->getDelegate();

@@ -81,4 +81,5 @@ return[
     'itemInactiveTryAgain' => 'Seems like the item is inactive. Please try again',
     'itemUpdatedSuccessfully' => 'Item Updated Successfully',
     'itemDeletedSuccessfully' => 'Item Deleted Successfully',
+    'totalRecords' => 'Total Records',
 ];

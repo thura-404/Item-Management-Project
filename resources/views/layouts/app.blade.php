@@ -46,6 +46,15 @@
                 </div>
             </a>
 
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('dashboard' ) }}">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
@@ -57,10 +66,8 @@
                 </a>
             </li>
 
-
-
             <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
+            <hr class="sidebar-divider  my-0">
 
             <!-- Nav Item - Logout -->
             <li class="nav-item">

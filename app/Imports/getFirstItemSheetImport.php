@@ -45,11 +45,16 @@ class getFirstItemSheetImport implements ToCollection
         try {
             // $dataRows = $rows->slice(2); // Exclude the first row (header row)
             $takeHeaders = $rows->slice(1);
-
+            
+            
             $headerRow = $takeHeaders->first(); // Get the header row from the Excel data
-
+            
             $dataRows = $rows->slice(2); // Exclude the first row (header row)
-
+            
+            if ($dataRows->isEmpty()) { //if there is no records in Excel file.
+                $errors = ['No records found.'];
+                throw ValidationException::withMessages(['validation_error' => $errors]);
+            }
             $headerColumns = $headerRow->toArray(); // Convert the header row to an array
 
             // Create an array to hold attribute names
@@ -70,10 +75,6 @@ class getFirstItemSheetImport implements ToCollection
                 '*.4' => ['required', new ValidExcelDate],
             ])->setAttributeNames($attributeNames);
 
-            if ($dataRows->isEmpty()) { //if there is no records in Excel file.
-                $errors = ['No records found.'];
-                throw ValidationException::withMessages(['validation_error' => $errors]);
-            }
 
             if ($dataRows->count() > 100) { //if there are more than 100 records in Excel file.
                 $errors = ['The maximum number of records allowed is 100.'];
@@ -83,9 +84,7 @@ class getFirstItemSheetImport implements ToCollection
 
             if ($validator->fails()) { // If there are any validation errors.
                 $errors = [];
-
-                $dataRowsArray = $dataRows->toArray();
-
+                
                 foreach ($validator->errors()->messages() as $field => $fieldErrors) {
                     $index = explode('.', $field)[0] + 1;
 

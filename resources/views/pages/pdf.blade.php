@@ -49,7 +49,7 @@
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->safety_stock }}</td>
                 <td>{{ $item->received_date }}</td>
-                <td style="max-width: 5rem;">{{ $item->description }}</td>
+                <td style="max-width: 5rem;">{!! nl2br(e($item->description)) !!}</td>
             </tr>
             @endforeach
         </tbody>
