@@ -68,15 +68,15 @@
                                     </script>
 
                                     <div class="text-center">
-                                        <h1 class="mb-4">Welcome Back!</h1>
+                                        <h1 class="mb-4">@lang('public.welcomeBack')!</h1>
                                     </div>
                                     <form action="{{ route('employees.login') }}" method="POST" class="user">
                                         @csrf
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" id="exampleInputEmail" value="{{ old('txtId') }}" aria-describedby="emailHelp" name="txtId" aria-describedby="emailHelp" placeholder="Enter Employee ID...">
+                                            <input type="text" class="form-control form-control-user" id="exampleInputEmail" value="" aria-describedby="emailHelp" name="txtId" aria-describedby="emailHelp" placeholder="@lang('public.enterEmployeeId')">
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user" id="exampleInputPassword" value="{{ old('txtPassword') }}" name="txtPassword" placeholder="Password">
+                                            <input type="password" class="form-control form-control-user" id="exampleInputPassword" value="" name="txtPassword" placeholder="@lang('public.password')">
                                         </div>
                                         <div class="form-group">
                                             <input type="submit" class="btn btn-primary btn-user btn-block" value="Login">

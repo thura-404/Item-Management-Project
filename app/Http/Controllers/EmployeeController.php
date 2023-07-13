@@ -54,11 +54,11 @@ class EmployeeController extends Controller
                 // Store the employee session
                 Session::put('employee', $request->txtId);
 
-                return redirect()->route('items.list')->with('success', 'Login Successfully');
+                return redirect()->route('items.list')->with('success', __('public.loginSuccessfully'));
             } elseif ($result === 'password') {
-                return redirect()->route('employees.login-form')->withErrors(['message' => 'Incorrect password']);
+                return redirect()->route('employees.login-form')->withErrors(['message' => __('public.incorrectPassword')]);
             } elseif ($result === 'emp_id') {
-                return redirect()->route('employees.login-form')->withErrors(['message' => 'Employee ID not found']);
+                return redirect()->route('employees.login-form')->withErrors(['message' => __('public.employeeIdNotFound')]);
             }
         } catch (\Exception $e) {
             return redirect()->route('employees.login-form')->withErrors(['message' => $e->getMessage()]);
@@ -79,7 +79,7 @@ class EmployeeController extends Controller
             // Clear the employee session
             Session::forget('employee');
 
-            return redirect()->route('employees.login-form')->with('success', 'Logged out successfully');
+            return redirect()->route('employees.login-form')->with('success', __('public.logoutSuccessfully'));
         } catch (\Exception $e) {
             return redirect()->route('employees.login-form')->withErrors(['message' => $e->getMessage()]);
         }

@@ -82,4 +82,16 @@ return[
     'itemUpdatedSuccessfully' => 'Item Updated Successfully',
     'itemDeletedSuccessfully' => 'Item Deleted Successfully',
     'totalRecords' => 'Total Records',
-];
+    'welcomeBack' => 'Welcome Back',
+    'enterEmployeeId' => 'Enter Employee Id',
+    'password' => 'Password',
+    'login' => 'Login',
+    'enterYourId' => 'Please, Enter your Id',
+    'enterValidId' => 'Please, Enter Valid Id(*Should be Numeric)',
+    'enterPassword' => 'Please, Enter Password',
+    'loginSuccessfully' => 'Login Successfully',
+    'incorrectPassword' => 'Incorrect Password',
+    'employeeIdNotFound' => 'Employee Id Not Found',
+    'logoutSuccessfully' => 'Logout Successfully',
+    'back' => 'Back',
+ ];

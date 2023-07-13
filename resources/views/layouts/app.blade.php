@@ -49,17 +49,6 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('dashboard' ) }}">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
                 <a class="nav-link" href="{{ route('items.list' ) }}">
                     <i class="fas fa-layer-group"></i>
                     <span>@lang('public.itemList')</span>

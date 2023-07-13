@@ -26,7 +26,7 @@ Item Update
 
 
 @section('form-nav-item-text')
-Back
+@lang('public.itemList')
 @endsection
 
 @section('image-display-block')

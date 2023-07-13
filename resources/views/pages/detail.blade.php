@@ -25,7 +25,7 @@ Item Details
 @endsection
 
 @section('nav-item-text')
-Back
+@lang('public.itemList')
 @endsection
 
 @section('body-container')
@@ -62,7 +62,7 @@ Back
                 <span class="icon text-white-50">
                     <i class="fas fa-arrow-left"></i>
                 </span>
-                <span class="text">@lang('public.itemList')</span>
+                <span class="text">@lang('public.back')</span>
             </a>
             <div class="dropdown no-arrow">
                 <a class="dropdown-toggle text-dark" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -33,9 +33,9 @@ class checkEmployeeLoginRequest extends FormRequest
     public function messages()
     {
         return [
-            'txtId.required' => 'Please enter your ID',
-            'txtId.numeric' => 'Please enter a valid ID(*should be numeric)',
-            'txtPassword.required' => 'Please enter your password'            
+            'txtId.required' => __('public.enterYourId'),
+            'txtId.numeric' => __('public.enterValidId'),
+            'txtPassword.required' => __('public.enterPassword')            
         ];
     }
 }
