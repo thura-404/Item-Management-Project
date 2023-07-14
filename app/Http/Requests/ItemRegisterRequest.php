@@ -32,11 +32,11 @@ class ItemRegisterRequest extends FormRequest
     {
         return [
             //
-            'txtItemID' => 'required',
-            'txtCode' => 'required',
-            'txtName' => 'required',
+            'txtItemID' => 'required|max:6',
+            'txtCode' => 'required|max:25',
+            'txtName' => 'required|max:40',
             'txtStock' => 'required|numeric|max:99999',
-            'txtDate' => 'required|date',
+            'txtDate' => 'required|date|max:40',
             'cbocategories' => 'required|exists:categories,id',
             'filImage' => 'mimes:jpeg,png,jpg,gif|max:2048'
         ];
@@ -53,13 +53,17 @@ class ItemRegisterRequest extends FormRequest
 
         return [
             'txtItemID.required' => __('public.itemIdRequired'),
+            'txtItemID.max' => __('public.itemIdMax'),
             'txtCode.required' => __('public.itemCodeRequired'),
+            'txtCode.max' => __('public.itemCodeMax'),
             'txtName.required' => __('public.itemNameRequired'),
+            'txtName.max' => __('public.itemNameMax'),
             'txtStock.required' => __('public.stockRequired'),
             'txtStock.numeric' => __('public.stockMustBeNumber'),
             'txtStock.max' => __('public.stockMustBeLess'),
             'txtDate.required' => __('public.dateIsRequired'),
             'txtDate.date' => __('public.dateIsInvalid'),
+            'txtDate.max' => __('public.dateIsInvalid'),
             'cbocategories.required' => __('public.categoryRequired'),
             'cbocategories.exists' => __('public.categoryInvalid'),
             'filImage.mimes' => __('public.imageMustBeImage'),

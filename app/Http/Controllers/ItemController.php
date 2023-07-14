@@ -328,9 +328,9 @@ class ItemController extends Controller
         try {
             $isDeleted = $this->itemInterface->getItemById($id);
             if ($isDeleted == null) {
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+                return redirect()->back()->withErrors(['message' => __('public.itemIdLost')]);
             } elseif ($isDeleted->deleted_at == null) {
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemAlreadyActive')]);
+                return redirect()->back()->withErrors(['message' => __('public.itemAlreadyActive')]);
             }
 
             $isInactive = new ActiveItem($id);
@@ -359,9 +359,9 @@ class ItemController extends Controller
 
             $isDeleted = $this->itemInterface->getItemById($id);
             if ($isDeleted == null) {
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+                return redirect()->back()->withErrors(['message' => __('public.itemIdLost')]);
             } elseif ($isDeleted->deleted_at != null) {
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemAlreadyInactive')]);
+                return redirect()->back()->withErrors(['message' => __('public.itemAlreadyInactive')]);
             }
             $isActive = new InactiveItem($id);
 
@@ -467,9 +467,9 @@ class ItemController extends Controller
 
 
             if (!$showItem) { // If item not found
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+                return redirect()->back()->withErrors(['message' => __('public.itemIdLost')]);
             } elseif ($showItem->deleted_at != null && request()->route()->getName() != 'items.detail') { // If item is inactive and the page is not detail page
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemInactiveTryAgain')]);
+                return redirect()->back()->withErrors(['message' => __('public.itemInactiveTryAgain')]);
             }
 
             if (request()->route()->getName() === 'items.detail') { // If the page is detail page
@@ -508,9 +508,9 @@ class ItemController extends Controller
 
             $isDeleted = $this->itemInterface->getItemById($id);
             if ($isDeleted == null) { // If item not found
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemIdLost')]);
+                return redirect(Session::get('requestReferrer'))->withErrors(['message' => __('public.itemIdLost')]);
             } elseif ($isDeleted->deleted_at != null) {
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemInactiveTryAgain')]);
+                return redirect(Session::get('requestReferrer'))->withErrors(['message' => __('public.itemInactiveTryAgain')]);
             }
 
             $updateItem = new UpdateItem($request, $id);
@@ -529,7 +529,7 @@ class ItemController extends Controller
                     $uploadResult = $newItemsUpload->executeProcess();
 
                     if (!$uploadResult) { // If image not saved
-                        return redirect()->route('items.register-form')->withErrors(['message' => __('public.errorSavingItemImage')]);
+                        return redirect()->route('items.update', ['id' => $id])->withErrors(['message' => __('public.errorSavingItemImage')]);
                     }
                 } else { // If image already exists
                     $updateItemsUpload = new UpdateItemUpload($request, $id, $result['primary_key']);
@@ -577,7 +577,7 @@ class ItemController extends Controller
         try {
             $isItemActive = $this->itemInterface->getItemById($request->txtId);
             if ($isItemActive->deleted_at != null) {
-                return redirect()->route('items.list')->withErrors(['message' => __('public.itemInactiveTryAgain')]);
+                return redirect()->back()->withErrors(['message' => __('public.itemInactiveTryAgain')]);
             }
 
             $isItemUploadExists = $this->itemsUploadInterface->CheckItemUploadExist($request->txtId);

@@ -94,4 +94,8 @@ return[
     'employeeIdNotFound' => 'Employee Id Not Found',
     'logoutSuccessfully' => 'Logout Successfully',
     'back' => 'Back',
+    'itemIdMax' => 'Item Id may not be greater than 6 characters',
+    'itemCodeMax' => 'Item Code may not be greater than 25 characters.',
+    'itemNameMax' => 'Item Name may not be greater than 40 characters',
+    'stockMustBeLess' => 'Stock must be less than or equal to 99999',
  ];

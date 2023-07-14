@@ -257,7 +257,7 @@ page-top
             </div>
             <div class="form-group">
                 <div class="form-floating">
-                    <textarea type="text" name="txtDescription" class="form-control form-control-user" id="floatingInputGridEmail" cols="30" rows="4" @yield('read-only') placeholder="Description">@yield('description-value'){{ old('txtDescription') }}</textarea>
+                    <textarea type="text" name="txtDescription" class="form-control form-control-user" id="floatingInputGridEmail" cols="30" rows="4" @yield('read-only') placeholder="Description">@yield('description-value')</textarea>
                     <label for="floatingInputGridEmail">@lang('public.description')</label>
                 </div>
             </div>
