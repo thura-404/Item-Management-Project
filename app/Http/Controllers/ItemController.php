@@ -192,7 +192,6 @@ class ItemController extends Controller
                 if (!$exportItems) { // if Errors
                     return redirect()->back()->withErrors(['id' => $id, 'message' => $exportItems]);
                 }
-                Log::info($exportItems);
                 $filteredItems = collect([$exportItems])->map(function ($item) {
                     $filteredItem = new stdClass();
                     $filteredItem->item_id = $item->item_id;
@@ -388,7 +387,7 @@ class ItemController extends Controller
         try {
             $activeItems = $this->itemInterface->getActiveItems();
 
-           return $activeItems;
+            return $activeItems;
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);
         }
@@ -404,7 +403,7 @@ class ItemController extends Controller
     {
         try {
             $inActiveItems = $this->itemInterface->getInactiveItems();
-            
+
             return $inActiveItems;
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['message' => $e->getMessage()]);
@@ -467,10 +466,11 @@ class ItemController extends Controller
 
 
             if (!$showItem) { // If item not found
-                return redirect()->back()->withErrors(['message' => __('public.itemIdLost')]);
+                return redirect(Session::get('requestReferrer'))->withErrors(['message' => __('public.itemIdLost')]);
             } elseif ($showItem->deleted_at != null && request()->route()->getName() != 'items.detail') { // If item is inactive and the page is not detail page
-                return redirect()->back()->withErrors(['message' => __('public.itemInactiveTryAgain')]);
+                return redirect(Session::get('requestReferrer'))->withErrors(['message' => __('public.itemInactiveTryAgain')]);
             }
+
 
             if (request()->route()->getName() === 'items.detail') { // If the page is detail page
                 return view('pages.detail')->with(['item' => $showItem->toArray()]);

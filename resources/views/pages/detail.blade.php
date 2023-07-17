@@ -33,7 +33,7 @@ Item Details
 <div class="container-fluid">
     @if($errors->any())
     <div class="card mb-4 py-3 border-bottom-dander alert alert-light alert-dismissible fade show" role="alert">
-        <strong>Error!</strong>
+        <strong>@lang('public.error')!</strong>
         <ul>
             @foreach ($errors->all() as $error)
             <li>{{ $error }}</li>
@@ -47,7 +47,7 @@ Item Details
 
     @if (session('success'))
     <div class="card mb-4 py-3 border-bottom-success alert alert-light alert-dismissible fade show" role="alert">
-        <strong>Success!</strong> {{ session('success') }}
+        <strong>@lang('public.success')!</strong> {{ session('success') }}
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -199,17 +199,17 @@ Item Details
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Inactive Item?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">@lang('public.sureInactive')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Item ID: <span id="inactiveModalItemId"></span></p>
+                <p>@lang('public.itemId') <span id="inactiveModalItemId"></span></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="modelInactiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.inactive', ['id' => ':itemId']) }}'.replace(':itemId', $('#inactiveModalItemId').text())">Inactive</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('public.close')</button>
+                <button type="button" class="btn btn-primary" id="modelInactiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.inactive', ['id' => ':itemId']) }}'.replace(':itemId', $('#inactiveModalItemId').text())">@lang('public.tapToInactive')</button>
             </div>
         </div>
     </div>
@@ -220,17 +220,17 @@ Item Details
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Are you Sure you want to Active Item?</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">@lang('public.sureActive')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Item ID: <span id="activeModalItemId"></span></p>
+                <p>@lang('public.itemId') <span id="activeModalItemId"></span></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="modelActiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.active', ['id' => ':itemId']) }}'.replace(':itemId', $('#activeModalItemId').text())">Active</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">@lang('public.close')</button>
+                <button type="button" class="btn btn-primary" id="modelActiveChange" data-dismiss="modal" onclick="location.href='{{ route('items.active', ['id' => ':itemId']) }}'.replace(':itemId', $('#activeModalItemId').text())">@lang('public.tapToActive')</button>
             </div>
         </div>
     </div>

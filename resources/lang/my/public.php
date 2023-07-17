@@ -69,6 +69,7 @@ return [
     'selectFileToUpload' => 'တင်ရန်ဖိုင်ကိုရွေးချယ်ပါ',
     'onlyExcelFileAllow' => 'Excel ဖိုင်များသာထည့်သွင်းနိုင်ပါမည်',
     'itemIdNotFound' => 'ပစ္စည်း ID မတွေ့ပါ',
+    'itemIdLost' => 'ပစ္စည်း ရှာမတွေ့ပါ။ ကျေးဇူးပြု၍ ထပ်မံ ကြိုးစားကြည့်ပါ။',
     'itemIdMustBeNumber' => 'ပစ္စည်း ID သည်အရေအတွက်ဖြစ်ရပါမည်',
     'itemIdFound' => 'ပစ္စည်းရှာမတွေ့ပါသေးတယ်!',
     'itemSaveSuccessfully' => 'ပစ္စည်းအောင်မြင်စွာ သိမ်းဆည်းထားပြီးဖြစ်ပါသည်',
