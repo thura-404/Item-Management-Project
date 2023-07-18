@@ -1,28 +1,3 @@
-@if(isset($items) && $items->count() == 0 && $items->currentPage() > 1)
-@php
-// Get the current URL
-$currentUrl = url()->current();
-
-// Get the URL parameters as an associative array
-$queryParams = request()->query();
-
-// Decrease the page value by one
-$previousPage = $queryParams['page'] - 1;
-
-// Set the updated page value in the query parameters
-$queryParams['page'] = $previousPage;
-
-// Generate the previous page URL with the updated query parameters
-$previousPageUrl = $currentUrl . '?' . http_build_query($queryParams);
-
-// Redirect to the previous page URL
-header('Location: ' . $previousPageUrl);
-exit;
-@endphp
-@endif
-
-
-
 @extends('layouts.app')
 
 @section('title')
@@ -170,7 +145,7 @@ page-top
                             <td>{{ $item['item_name'] }}</td>
                             <td>{{ $item['name'] }}</td>
                             <td>{{ $item['safety_stock'] }}</td>
-                            <td>
+                            <td style="min-width: 12rem;">
                                 @if ($item['deleted_at'] == null)
                                 <!-- Button trigger InactiveModel  -->
                                 <button type="button" class="btn btn-success btn-icon-split" data-id="{{ $item['id'] }}" data-toggle="modal" data-target="#itemInactiveModel">
@@ -201,7 +176,7 @@ page-top
 
 
                             </td>
-                            <td>
+                            <td style="min-width: 10rem;">
                                 <a href="{{ route('items.detail', ['id' => $item['id']]) }}" class="btn btn-info btn-icon-split tooltip-test" data-toggle="tooltip" data-placement="top" title="@lang('public.detail')">
                                     <span class="text">
                                         <i class="fas fa-info-circle"></i>

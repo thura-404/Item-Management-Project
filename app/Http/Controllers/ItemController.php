@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Interfaces\CategoryInterface;
+use Illuminate\Support\Facades\Route;
 use App\DBTransactions\Items\SaveItem;
 use App\Interfaces\ItemUploadInterface;
 use Illuminate\Support\Facades\Session;
@@ -54,7 +55,18 @@ class ItemController extends Controller
         $items = $this->itemInterface->getAllItems();
         $categories = $this->categoryInterface->getUsedCategories();
         $totalRecord = $items->count();
-        return view('pages.index')->with('items', $items->paginate(20))->with('total', $totalRecord)->with('categories', $categories);
+
+        // Paginate the items;
+        $paginatedItems = $items->paginate(20);
+
+        // Check if the current page exceeds the total number of available pages
+        $currentPage = request()->query('page', 1);
+        $maxPage = $paginatedItems->lastPage();
+        if ($currentPage > $maxPage) {
+            return redirect()->route('items.list', ['page' => $maxPage]);
+        }
+
+        return view('pages.index')->with('items', $paginatedItems)->with('total', $totalRecord)->with('categories', $categories);
     }
 
     /**
@@ -464,11 +476,34 @@ class ItemController extends Controller
             $showItem = $this->itemInterface->getItemById($id);
             $categories = $this->categoryInterface->getAllCategories();
 
+            $url = url()->previous();
+            $routeName = '';
+
+            if ($url) {
+                $route = Route::getRoutes()->match(Request::create($url));
+                $routeName = $route ? $route->getName() : '';
+            }
 
             if (!$showItem) { // If item not found
-                return redirect(Session::get('requestReferrer'))->withErrors(['message' => __('public.itemIdLost')]);
+                if ($routeName == "items.update") {
+
+                    if (Session::get('requestReferrer')) {
+                        return redirect(Session::get('requestReferrer'))->withErrors(['message' => __('public.itemIdLost')]);
+                    }
+                    return redirect()->back()->withErrors(['message' => __('public.itemIdLost')]);
+                }
+
+                return redirect()->back()->withErrors(['message' => __('public.itemIdLost')]);
             } elseif ($showItem->deleted_at != null && request()->route()->getName() != 'items.detail') { // If item is inactive and the page is not detail page
-                return redirect(Session::get('requestReferrer'))->withErrors(['message' => __('public.itemInactiveTryAgain')]);
+                if ($routeName == "items.update") {
+
+                    if (Session::get('requestReferrer')) {
+                        return redirect(Session::get('requestReferrer'))->withErrors(['message' =>  __('public.itemInactiveTryAgain')]);
+                    }
+                    return redirect()->back()->withErrors(['message' =>  __('public.itemInactiveTryAgain')]);
+                }
+
+                return redirect()->back()->withErrors(['message' =>  __('public.itemInactiveTryAgain')]);
             }
 
 
