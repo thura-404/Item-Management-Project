@@ -114,7 +114,7 @@ page-top
         </form>
 
     </div>
-    <!-- DataTales Example -->
+    <!-- DataTables Example -->
     <div class="card shadow mb-4">
         <div class="card-header p-3 d-flex flex-row">
             <div class="col-6">

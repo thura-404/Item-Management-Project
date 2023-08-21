@@ -32,14 +32,36 @@ use App\DBTransactions\ItemsUploads\UpdateItemUpload;
 
 class ItemController extends Controller
 {
-    private $itemInterface, $categoryInterface, $itemsUploadInterface;
+    private $itemInterface, $categoryInterface, $itemsUploadInterface, $item;
 
     public function __construct(Item $item, ItemInterface $itemInterface, CategoryInterface $categoryInterface, ItemUploadInterface $itemsUploadInterface)
     {
+        $this->item = $item;
         $this->itemInterface = $itemInterface;
         $this->categoryInterface = $categoryInterface;
         $this->itemsUploadInterface = $itemsUploadInterface;
     }
+
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @author Thura Win
+     * @create 18/08/2023
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllItemsAPI()
+    {
+        //
+        $items = $this->itemInterface->getAllItems();
+        $paginatedItems = $items->paginate(20);
+        return response()->json(["items" => $paginatedItems], 200);
+    }
+
+    //----------------------------------------------------------------  End of APIs Functions    ----------------------------------------------------------------
+
+
 
 
     /**

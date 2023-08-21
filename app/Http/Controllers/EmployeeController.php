@@ -25,6 +25,66 @@ class EmployeeController extends Controller
     }
 
     /**
+     * Display a listing of employees.
+     *
+     * @author Thura Win
+     * @create 17/08/2023
+     * @return \Illuminate\Http\Response
+     */
+    public function getAllEmployeesAPI()
+    {
+        //
+        try {
+            $result = $this->employeeInterface->getAllEmployees();
+
+            return response()->json($result);
+
+            // if ($result === true) {
+            //     // Store the employee session
+            //     Session::put('employee', $request->txtId);
+
+            //     return redirect()->route('items.list')->with('success', __('public.loginSuccessfully'));
+            // } elseif ($result === 'password') {
+            //     return redirect()->route('employees.login-form')->withErrors(['message' => __('public.incorrectPassword')]);
+            // } elseif ($result === 'emp_id') {
+            //     return redirect()->route('employees.login-form')->withErrors(['message' => __('public.employeeIdNotFound')]);
+            // }
+        } catch (\Exception $e) {
+            return redirect()->route('employees.login-form')->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @author Thura Win
+     * @create 22/06/2023
+     * @return \Illuminate\Http\Response
+     */
+    public function loginAPI(checkEmployeeLoginRequest $request)
+    {
+        //
+        try {
+            $result = $this->employeeInterface->checkEmployeeLogin($request->txtId, $request->txtPassword);
+
+            if ($result === true) {
+                // return the success api to the frontend
+                return response()->json([]);
+                return redirect()->route('items.list')->with('success', __('public.loginSuccessfully'));
+            } elseif ($result === 'password') {
+                return redirect()->route('employees.login-form')->withErrors(['message' => __('public.incorrectPassword')]);
+            } elseif ($result === 'emp_id') {
+                return redirect()->route('employees.login-form')->withErrors(['message' => __('public.employeeIdNotFound')]);
+            }
+        } catch (\Exception $e) {
+            return redirect()->route('employees.login-form')->withErrors(['message' => $e->getMessage()]);
+        }
+    }
+
+    //-------------------------------------------------------------------- End of APIs --------------------------------------------------------------------//    
+
+
+    /**
      * Display a listing of the resource.
      *
      * @author Thura Win
@@ -36,6 +96,8 @@ class EmployeeController extends Controller
         //
         return view('pages.login');
     }
+
+
 
     /**
      * Display a listing of the resource.

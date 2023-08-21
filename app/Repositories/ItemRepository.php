@@ -25,6 +25,7 @@ class ItemRepository implements ItemInterface
      */
     public function getAllItems()
     {
+        Log::info('ItemRepository: getAllItems()');
         return Item::join('categories', 'items.category_id', '=', 'categories.id')
             ->leftJoin('items_uploads', 'items.id', '=', 'items_uploads.item_id')
             ->select('items.*', 'categories.name as name', 'items_uploads.file_path as image')
